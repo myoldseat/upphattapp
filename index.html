@@ -1,0 +1,3088 @@
+<!DOCTYPE html>
+<html lang="is">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Upphátt">
+<title>Upphátt</title>
+<style>
+:root{
+  --sky:#E8F4FD;--ocean:#2A6EBB;--deep:#1A3A5C;--moss:#4CAF7D;--coral:#FF6B6B;
+  --mist:#8A9BB0;--sun:#FFB830;--purple:#7c3aed;
+  --card-shadow:0 4px 20px rgba(26,58,92,.10);
+}
+*{box-sizing:border-box} html,body{height:100%;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--sky);color:#1E1E2E}
+.screen{display:none;min-height:100vh;flex-direction:column}.screen.active{display:flex}
+.topbar{background:var(--ocean);color:#fff;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:20;box-shadow:0 2px 12px rgba(42,110,187,.25)}
+.logo{font-family:Georgia,serif;font-size:20px;font-weight:700;display:flex;align-items:center;gap:8px}
+.logo-icon{width:30px;height:30px;background:#fff;border-radius:7px;color:var(--ocean);display:flex;align-items:center;justify-content:center;font-family:Georgia,serif;font-weight:900}
+.scroll-body{flex:1;overflow:auto;padding:18px 16px 40px;max-width:520px;width:100%;margin:0 auto}
+.hero{border-radius:22px;padding:24px 20px;color:#fff;margin-bottom:18px;background:linear-gradient(135deg,var(--ocean),var(--deep))}
+.hero.green{background:linear-gradient(135deg,var(--moss),#2e7a4f)}
+.hero.purple{background:linear-gradient(135deg,var(--purple),#4c1d95)}
+.hero-label{font-size:11px;font-weight:800;letter-spacing:1.3px;text-transform:uppercase;opacity:.8;margin-bottom:6px}
+.hero h1{font-family:Georgia,serif;font-size:28px;line-height:1.1;margin:0 0 8px}
+.hero p{margin:0;font-size:14px;opacity:.88;font-weight:600}
+.card{background:#fff;border-radius:18px;padding:15px;margin-bottom:12px;box-shadow:var(--card-shadow)}
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-size:11px;font-weight:800;color:var(--deep);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.form-group input{width:100%;border:2px solid #dde5f0;border-radius:12px;padding:14px;font-size:16px;font-weight:600;background:#f7fbff;outline:none}
+.form-group input:focus{border-color:var(--ocean);background:#fff}
+.btn{width:100%;border:none;border-radius:16px;padding:16px;font-size:17px;font-weight:800;cursor:pointer}
+.btn-primary{background:var(--ocean);color:#fff}
+.btn-success{background:var(--moss);color:#fff}
+.btn-ghost{background:#fff;color:var(--deep);border:2px solid #dde5f0}
+.btn+.btn{margin-top:10px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.choice{border:none;border-radius:20px;padding:24px 16px;color:#fff;cursor:pointer;width:100%}
+.choice.blue{background:var(--ocean)}.choice.green{background:var(--moss)}
+.choice .big{font-size:36px;display:block;margin-bottom:8px}
+.choice .title{font-size:15px;font-weight:800}
+.choice .sub{font-size:11px;opacity:.85;margin-top:4px}
+.back-btn{background:rgba(255,255,255,.18);border:none;border-radius:999px;color:#fff;font-size:13px;font-weight:700;padding:7px 14px;cursor:pointer}
+.notice{font-size:12px;color:var(--mist);font-weight:700;min-height:18px}
+.timer-wrap{text-align:center;padding:16px 0}
+.timer-big{font-family:Georgia,serif;font-size:72px;font-weight:700;color:var(--deep);line-height:1}
+.timer-big.running{color:var(--moss)}
+.timer-big.done{color:var(--sun)}
+.timer-sub{font-size:12px;color:var(--mist);font-weight:800;text-transform:uppercase;letter-spacing:.8px;margin-top:6px}
+.rec-dot{display:inline-block;width:8px;height:8px;background:var(--coral);border-radius:50%;margin-right:5px;animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.2}}
+.week-dots{display:flex;gap:4px}
+.day-dot{flex:1;height:44px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-direction:column;font-size:8px;font-weight:800;gap:2px}
+.day-dot.full{background:var(--moss);color:#fff}
+.day-dot.partial{background:#b8e0c8;color:#2e7a4f}
+.day-dot.none{background:#f0f4f9;color:#aab7c4;border:1.5px dashed #dde5f0}
+.session{padding:12px 0;border-bottom:1px solid #eef3f9}
+.session:last-child{border-bottom:none}
+.session-title{font-size:14px;font-weight:800}
+.session-meta{font-size:11px;color:var(--mist);margin-top:3px}
+.group-title{font-family:Georgia,serif;font-size:22px;color:var(--deep);margin:4px 0 12px;font-weight:700}
+.audio-box{margin-top:8px}
+audio{width:100%;border-radius:8px}
+.streak-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,184,48,0.25);border-radius:50px;padding:6px 14px;font-size:13px;font-weight:800;color:var(--deep);margin-top:8px}
+.pill{display:inline-block;background:#eef5ff;color:var(--ocean);border-radius:999px;padding:5px 10px;font-size:11px;font-weight:800}
+.stat-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px}
+.stat-box{background:#f7fbff;border-radius:12px;padding:10px;text-align:center}
+.stat-val{font-family:Georgia,serif;font-size:22px;font-weight:700;color:var(--ocean)}
+.stat-lbl{font-size:9px;font-weight:800;color:var(--mist);text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+.mode-picker{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.mode-btn{border:2px solid #dde5f0;background:#fff;border-radius:14px;padding:14px;cursor:pointer;text-align:center;font-weight:800;font-size:13px;color:var(--deep)}
+.mode-btn.active{background:var(--ocean);border-color:var(--ocean);color:#fff}
+
+/* ── External styles.css ── */
+:root {
+  --sky: #E8F4FD;
+  --ocean: #2A6EBB;
+  --deep: #1A3A5C;
+  --moss: #4CAF7D;
+  --coral: #FF6B6B;
+  --mist: #8A9BB0;
+  --sun: #FFB830;
+  --purple: #7c3aed;
+  --card-shadow: 0 4px 20px rgba(26,58,92,.10);
+}
+
+* { box-sizing: border-box }
+html, body { height: 100%; margin: 0; padding: 0 }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--sky);
+  color: #1E1E2E;
+}
+
+/* ── Screens ── */
+.screen { display: none; min-height: 100vh; flex-direction: column }
+.screen.active { display: flex }
+
+/* ── Top bar ── */
+.topbar {
+  background: var(--ocean); color: #fff;
+  padding: 14px 18px; display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 20;
+  box-shadow: 0 2px 12px rgba(42,110,187,.25);
+}
+.logo { font-family: Georgia, serif; font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 8px }
+.logo-icon {
+  width: 30px; height: 30px; background: #fff; border-radius: 7px;
+  color: var(--ocean); display: flex; align-items: center; justify-content: center;
+  font-family: Georgia, serif; font-weight: 900;
+}
+
+/* ── Layout ── */
+.scroll-body { flex: 1; overflow: auto; padding: 18px 16px 40px; max-width: 520px; width: 100%; margin: 0 auto }
+
+/* ── Hero cards ── */
+.hero { border-radius: 22px; padding: 24px 20px; color: #fff; margin-bottom: 18px; background: linear-gradient(135deg, var(--ocean), var(--deep)) }
+.hero.landing { padding-bottom: 28px; }
+.hero.green { background: linear-gradient(135deg, var(--moss), #2e7a4f) }
+.hero.purple { background: linear-gradient(135deg, var(--purple), #4c1d95) }
+.hero-label { font-size: 11px; font-weight: 800; letter-spacing: 1.3px; text-transform: uppercase; opacity: .8; margin-bottom: 6px }
+.hero h1 { font-family: Georgia, serif; font-size: 28px; line-height: 1.1; margin: 0 0 8px }
+.hero p { margin: 0; font-size: 14px; opacity: .88; font-weight: 600 }
+.feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px }
+.feature-card { padding: 16px; background: #fff; border-radius: 18px; box-shadow: var(--card-shadow); }
+.feature-title { font-size: 14px; font-weight: 800; margin-bottom: 8px; color: var(--ocean); }
+.feature-card p { margin: 0; font-size: 13px; line-height: 1.5; color: var(--deep); opacity: .92; }
+
+/* ── Cards ── */
+.card { background: #fff; border-radius: 18px; padding: 15px; margin-bottom: 12px; box-shadow: var(--card-shadow) }
+
+/* ── Forms ── */
+.form-group { margin-bottom: 14px }
+.form-group label { display: block; font-size: 11px; font-weight: 800; color: var(--deep); margin-bottom: 6px; text-transform: uppercase; letter-spacing: .5px }
+.form-group input { width: 100%; border: 2px solid #dde5f0; border-radius: 12px; padding: 14px; font-size: 16px; font-weight: 600; background: #f7fbff; outline: none }
+.form-group input:focus { border-color: var(--ocean); background: #fff }
+
+/* ── Child Login Screen (full-page dark) ── */
+#screen-child-login {
+  background:
+    radial-gradient(520px 260px at 50% 14%, rgba(18, 216, 223, 0.18) 0%, rgba(18, 216, 223, 0.02) 58%, rgba(18, 216, 223, 0) 100%),
+    #050b14;
+  align-items: center;
+  justify-content: center;
+  min-height: 100dvh;
+  padding:
+    calc(10px + env(safe-area-inset-top))
+    calc(12px + env(safe-area-inset-right))
+    calc(10px + env(safe-area-inset-bottom))
+    calc(12px + env(safe-area-inset-left));
+  overflow: hidden;
+}
+.cl-wrap {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  width: min(90vw, 390px);
+  padding: 14px 0 18px;
+  margin: auto;
+}
+.cl-wrap::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(80vw, 360px);
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(1);
+  background: radial-gradient(circle, rgba(18, 216, 223, 0.55) 0%, rgba(18, 216, 223, 0.32) 28%, rgba(18, 216, 223, 0.1) 56%, rgba(18, 216, 223, 0) 78%);
+  filter: blur(18px);
+  opacity: 0.7;
+  pointer-events: none;
+  z-index: 0;
+  transition: opacity 0.28s ease, filter 0.28s ease;
+  animation: cl-orb-breathe-grow 6.8s ease-in-out infinite;
+}
+.cl-wrap > * {
+  position: relative;
+  z-index: 1;
+}
+.cl-brand {
+  font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+  font-size: clamp(52px, 10.5vw, 88px);
+  font-weight: 700;
+  color: #e8eef9;
+  line-height: 1;
+  letter-spacing: -1.8px;
+  transform: translateY(-10px);
+}
+.cl-brand span { color: #14d0dc }
+.cl-tagline {
+  margin: 0 0 18px;
+  font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+  font-size: clamp(15px, 2.6vw, 22px);
+  color: rgba(207, 219, 236, 0.68);
+  line-height: 1.15;
+  letter-spacing: -0.3px;
+  text-align: center;
+  transform: translateY(-10px);
+}
+.cl-card {
+  width: 100%;
+  max-width: 390px;
+  background: rgba(6, 12, 22, 0.56);
+  border: 1px solid rgba(18, 216, 223, 0.14);
+  border-radius: 16px;
+  padding: 20px 16px 16px;
+  box-shadow:
+    0 0 0 1px rgba(18, 216, 223, 0.06) inset,
+    0 26px 64px rgba(0, 0, 0, 0.36),
+    0 0 38px rgba(18, 216, 223, 0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+.cl-heading {
+  font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+  font-size: clamp(18px, 3.5vw, 27px);
+  font-weight: 700;
+  color: #eaf1fc;
+  margin: 0;
+  text-align: center;
+  letter-spacing: -0.6px;
+}
+.cl-subheading {
+  font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+  font-size: clamp(12px, 2.2vw, 18px);
+  color: rgba(206, 220, 238, 0.56);
+  margin: 0 0 7px;
+  text-align: center;
+  letter-spacing: -0.15px;
+}
+.cl-input {
+  width: 100%;
+  background: #071221;
+  border: 2px solid rgba(130, 155, 190, 0.24);
+  border-radius: 10px;
+  padding: 7px 12px;
+  font-size: clamp(15px, 2.8vw, 20px);
+  font-weight: 700;
+  letter-spacing: clamp(3px, 0.6vw, 5px);
+  text-align: center;
+  color: #d9e8ff;
+  font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+  outline: none;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+  box-shadow: none;
+}
+.cl-wrap.is-engaged .cl-input:focus {
+  border-color: #22f1fb;
+  box-shadow:
+    0 0 0 2px rgba(18, 216, 223, 0.36),
+    0 0 16px rgba(18, 216, 223, 0.42),
+    0 0 30px rgba(18, 216, 223, 0.3);
+}
+.cl-input:focus {
+  border-color: rgba(150, 192, 236, 0.5);
+  box-shadow: none;
+}
+.cl-input::placeholder { color: rgba(227, 237, 255, 0.58); letter-spacing: clamp(4px, 0.9vw, 8px) }
+.cl-btn {
+  width: 100%;
+  background: #0f7f86;
+  color: #061018;
+  border: none;
+  border-radius: 9px;
+  padding: 7px 12px;
+  font-size: clamp(15px, 2.8vw, 20px);
+  font-weight: 600;
+  letter-spacing: -0.2px;
+  cursor: pointer;
+  transition: filter 0.15s ease, transform 0.15s ease;
+  box-shadow: 0 0 28px rgba(18, 216, 223, 0.24);
+}
+.cl-btn:hover, .cl-btn:active { filter: brightness(1.1); transform: translateY(-1px) }
+.cl-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  max-width: 390px;
+  margin-top: 28px;
+  color: rgba(203, 214, 230, 0.62);
+  font-size: clamp(12px, 2.1vw, 16px);
+  font-weight: 500;
+}
+.cl-divider::before, .cl-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: rgba(203, 214, 230, 0.24);
+}
+.cl-parent-link {
+  background: none;
+  border: none;
+  color: rgba(210, 222, 238, 0.68);
+  font-size: clamp(12px, 2.1vw, 16px);
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0 16px;
+  margin-top: 10px;
+  transition: color 0.15s ease;
+  letter-spacing: -0.3px;
+}
+.cl-parent-link:hover { color: #d9eff7 }
+
+@keyframes cl-orb-breathe {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1.85);
+    opacity: 0.62;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(2.2);
+    opacity: 0.82;
+  }
+}
+
+@keyframes cl-orb-breathe-grow {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(0.9);
+    opacity: 0.55;
+    filter: blur(14px);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(2.8);
+    opacity: 0.85;
+    filter: blur(22px);
+  }
+}
+
+@media (max-width: 720px) {
+  #screen-child-login {
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+  .cl-wrap {
+    width: 92vw;
+    padding: 10px 0 14px;
+    gap: 16px;
+  }
+  .cl-brand {
+    font-size: 74px;
+    transform: translateY(-14px);
+  }
+  .cl-tagline {
+    font-size: 17px;
+    margin-bottom: 8px;
+    transform: translateY(-14px);
+  }
+  .cl-card {
+    width: 100%;
+    max-width: 100%;
+    border-radius: 18px;
+    padding: 22px 18px 18px;
+    gap: 14px;
+  }
+  .cl-heading {
+    font-size: 24px;
+  }
+  .cl-subheading {
+    font-size: 15px;
+    margin-bottom: 4px;
+  }
+  .cl-input {
+    font-size: 20px;
+    padding: 11px 14px;
+    letter-spacing: 5px;
+    border-radius: 12px;
+  }
+  .cl-btn {
+    font-size: 19px;
+    padding: 12px 14px;
+    border-radius: 12px;
+  }
+  .cl-divider {
+    font-size: 14px;
+    gap: 10px;
+    margin-top: 24px;
+  }
+  .cl-parent-link {
+    font-size: 14px;
+    margin-top: 8px;
+  }
+  .cl-wrap::before {
+    top: 50%;
+    width: 88vw;
+  }
+}
+
+/* ── Buttons ── */
+.btn { width: 100%; border: none; border-radius: 16px; padding: 16px; font-size: 17px; font-weight: 800; cursor: pointer }
+.btn-primary { background: var(--ocean); color: #fff }
+.btn-success { background: var(--moss); color: #fff }
+.btn-ghost { background: #fff; color: var(--deep); border: 2px solid #dde5f0 }
+.btn + .btn { margin-top: 10px }
+.back-btn { background: rgba(255,255,255,.18); border: none; border-radius: 999px; color: #fff; font-size: 13px; font-weight: 700; padding: 7px 14px; cursor: pointer }
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(8, 19, 35, 0.55);
+  backdrop-filter: blur(2px);
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+}
+
+.modal-card {
+  width: min(92vw, 420px);
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #dbe7f3;
+  box-shadow: 0 24px 60px rgba(14, 36, 61, 0.28);
+  padding: 16px;
+}
+
+/* ── Grid & choices ── */
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px }
+.grid4 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px }
+.choice { border: none; border-radius: 20px; padding: 24px 16px; color: #fff; cursor: pointer; width: 100% }
+.choice.blue { background: var(--ocean) }
+.choice.green { background: var(--moss) }
+.choice.purple { background: var(--purple) }
+.choice.coral { background: var(--coral) }
+.choice .big { font-size: 36px; display: block; margin-bottom: 8px }
+.choice .title { font-size: 15px; font-weight: 800 }
+.choice .sub { font-size: 11px; opacity: .85; margin-top: 4px }
+
+.age-switch { display: flex; gap: 10px; margin-bottom: 18px }
+.age-btn { flex: 1; border-radius: 999px; border: 2px solid rgba(221,229,240,.9); background: #fff; color: var(--deep); padding: 10px 12px; font-size: 13px; font-weight: 800; cursor: pointer; transition: all .2s ease }
+.age-btn.active { background: var(--ocean); color: #fff; border-color: var(--ocean) }
+.age-btn:hover { opacity: .95 }
+.age-btn:focus { outline: none; box-shadow: 0 0 0 3px rgba(42,110,187,.2) }
+
+body.theme-teens { background: #070b1f; color: #f8fafc }
+body.theme-teens .topbar { background: #111827; box-shadow: 0 2px 18px rgba(0,0,0,.35) }
+body.theme-teens .logo-icon { background: #f8fafc; color: #111827 }
+body.theme-teens .scroll-body { color: #f8fafc }
+body.theme-teens .hero { background: linear-gradient(135deg, #111827, #0f172a); box-shadow: inset 0 0 0 1px rgba(255,255,255,.04) }
+body.theme-teens .hero-label,
+body.theme-teens .hero h1,
+body.theme-teens .hero p { color: #f8fafc }
+body.theme-teens .card { background: rgba(15,23,42,.96); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 20px 40px rgba(0,0,0,.25) }
+body.theme-teens .form-group label { color: #cbd5e1 }
+body.theme-teens .form-group input { background: rgba(255,255,255,.05); border-color: rgba(255,255,255,.12); color: #f8fafc }
+body.theme-teens .form-group input::placeholder { color: rgba(248,250,252,.65) }
+body.theme-teens .form-group input:focus { border-color: var(--ocean); background: rgba(255,255,255,.08) }
+body.theme-teens .btn-ghost { background: rgba(255,255,255,.04); color: #f8fafc; border-color: rgba(255,255,255,.14) }
+body.theme-teens .btn-primary { background: var(--ocean); color: #111827 }
+body.theme-teens .btn-success { background: var(--moss); color: #111827 }
+body.theme-teens .notice { color: #94a3b8 }
+body.theme-teens .choice { box-shadow: 0 16px 32px rgba(0,0,0,.25) }
+body.theme-teens .choice.blue { background: #2563eb }
+body.theme-teens .choice.green { background: #10b981 }
+body.theme-teens .choice.purple { background: #8b5cf6 }
+body.theme-teens .choice.coral { background: #f97316 }
+body.theme-teens .pill { background: rgba(255,255,255,.08); color: #f8fafc; border: 1px solid rgba(255,255,255,.1) }
+body.theme-teens .back-btn { background: rgba(255,255,255,.12) }
+body.theme-teens .age-btn { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.16); color: #f8fafc }
+body.theme-teens .age-btn.active { background: var(--moss); color: #111827; border-color: var(--moss) }
+
+/* ── Notice ── */
+.notice { font-size: 12px; color: var(--mist); font-weight: 700; min-height: 18px }
+
+/* ── Timer ── */
+.timer-wrap { text-align: center; padding: 16px 0 }
+.timer-big { font-family: Georgia, serif; font-size: 72px; font-weight: 700; color: var(--deep); line-height: 1 }
+.timer-big.running { color: var(--moss) }
+.timer-big.done { color: var(--sun) }
+.timer-sub { font-size: 12px; color: var(--mist); font-weight: 800; text-transform: uppercase; letter-spacing: .8px; margin-top: 6px }
+
+/* ── Recording dot ── */
+.rec-dot { display: inline-block; width: 8px; height: 8px; background: var(--coral); border-radius: 50%; margin-right: 5px; animation: blink 1s infinite }
+@keyframes blink { 0%, 100% { opacity: 1 } 50% { opacity: 0.2 } }
+
+/* ── Week dots ── */
+.week-dots { display: flex; gap: 4px }
+.day-dot { flex: 1; height: 44px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-direction: column; font-size: 8px; font-weight: 800; gap: 2px }
+.day-dot.full { background: var(--moss); color: #fff }
+.day-dot.partial { background: #b8e0c8; color: #2e7a4f }
+.day-dot.none { background: #f0f4f9; color: #aab7c4; border: 1.5px dashed #dde5f0 }
+
+/* ── Sessions ── */
+.session { padding: 12px 0; border-bottom: 1px solid #eef3f9 }
+.session:last-child { border-bottom: none }
+.session-title { font-size: 14px; font-weight: 800 }
+.session-meta { font-size: 11px; color: var(--mist); margin-top: 3px }
+
+/* ── Misc ── */
+.group-title { font-family: Georgia, serif; font-size: 22px; color: var(--deep); margin: 4px 0 12px; font-weight: 700 }
+.audio-box { margin-top: 8px }
+audio { width: 100%; border-radius: 8px }
+.streak-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,184,48,0.25); border-radius: 50px; padding: 6px 14px; font-size: 13px; font-weight: 800; color: var(--deep); margin-top: 8px }
+.pill { display: inline-block; background: #eef5ff; color: var(--ocean); border-radius: 999px; padding: 5px 10px; font-size: 11px; font-weight: 800 }
+
+/* ── Stats ── */
+.stat-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 12px }
+.stat-box { background: #f7fbff; border-radius: 12px; padding: 10px; text-align: center }
+.stat-val { font-family: Georgia, serif; font-size: 22px; font-weight: 700; color: var(--ocean) }
+.stat-lbl { font-size: 9px; font-weight: 800; color: var(--mist); text-transform: uppercase; letter-spacing: .5px; margin-top: 2px }
+
+/* ── Mode picker ── */
+.mode-picker { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px }
+.mode-btn { border: 2px solid #dde5f0; background: #fff; border-radius: 14px; padding: 14px; cursor: pointer; text-align: center; font-weight: 800; font-size: 13px; color: var(--deep) }
+.mode-btn.active { background: var(--ocean); border-color: var(--ocean); color: #fff }
+
+/* ── Audio clips ── */
+.audio-clips-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin: 10px 0 4px }
+.clip-btn { background: #f0f9f4; border: 1.5px solid var(--moss); border-radius: 10px; padding: 8px 4px; font-size: 11px; font-weight: 800; color: #1a7a3f; cursor: pointer; text-align: center; line-height: 1.3 }
+.clip-btn:disabled { background: #f5f5f5; border-color: #dde5f0; color: #aab7c4; cursor: default }
+.clip-btn.loading { background: #fffbe6; border-color: var(--sun); color: #b07d00 }
+.clip-player { margin-top: 6px; display: none }
+.clip-player audio { width: 100%; border-radius: 8px }
+
+/* ── Neon Landing Reskin (screen-login only) ── */
+#screen-login {
+  background: radial-gradient(circle at 50% 20%, #042133 0%, #020a17 38%, #010611 78%);
+  color: #d9e6f0;
+}
+
+#screen-login .scroll-body {
+  max-width: 740px;
+  padding-top: 26px;
+  padding-bottom: 30px;
+}
+
+#screen-login .hero.landing {
+  background: transparent;
+  box-shadow: none;
+  text-align: center;
+  margin-bottom: 18px;
+  padding: 8px 12px 12px;
+}
+
+#screen-login .hero-label {
+  color: #88a0b3;
+  letter-spacing: 1.1px;
+}
+
+#screen-login h1 {
+  font-family: 'Segoe UI', sans-serif;
+  font-size: clamp(42px, 7vw, 58px) !important;
+  line-height: 1.02;
+  margin-bottom: 8px !important;
+  font-weight: 800;
+  color: #d9e6f0;
+  text-shadow: 0 0 24px rgba(28, 212, 220, 0.22);
+}
+
+#screen-login h1::first-letter {
+  color: #19d4db;
+}
+
+#screen-login #app-subtitle {
+  color: #8ea3b5;
+  font-size: clamp(19px, 3.2vw, 26px) !important;
+  opacity: 1 !important;
+}
+
+#screen-login .age-switch {
+  margin: 8px auto 18px;
+  max-width: 520px;
+}
+
+#screen-login .age-btn {
+  background: rgba(8, 22, 40, 0.85);
+  border: 1px solid rgba(132, 157, 179, 0.24);
+  color: #a9bdce;
+}
+
+#screen-login .age-btn.active {
+  background: rgba(22, 211, 220, 0.2);
+  border-color: rgba(22, 211, 220, 0.65);
+  color: #d4f9fb;
+  box-shadow: 0 0 16px rgba(22, 211, 220, 0.28);
+}
+
+#screen-login .choice {
+  border-radius: 18px;
+  background: rgba(9, 20, 36, 0.92) !important;
+  border: 1px solid rgba(92, 117, 139, 0.22);
+  color: #dbe8f2;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+}
+
+#screen-login .choice .sub {
+  color: #8ea4b6;
+}
+
+#screen-login .choice.green {
+  border-color: rgba(22, 211, 220, 0.45);
+  box-shadow: 0 0 18px rgba(22, 211, 220, 0.16), inset 0 0 0 1px rgba(22, 211, 220, 0.2);
+}
+
+#screen-login .feature-card,
+#screen-login .card {
+  background: rgba(8, 20, 36, 0.92);
+  border: 1px solid rgba(92, 117, 139, 0.2);
+  box-shadow: none;
+  color: #b9ccdc;
+}
+
+#screen-login .feature-title,
+#screen-login .card div,
+#screen-login .card p {
+  color: #c9d9e6;
+}
+
+#screen-login .feature-card p {
+  color: #9fb3c4;
+}
+/* ══════════════════════════════════════════════
+   UppHátt — Parent Login & Signup Popups
+   ══════════════════════════════════════════════ */
+
+.rg-popup-card {
+  position: relative;
+  width: min(96vw, 520px);
+  background: rgba(6, 14, 26, 0.97);
+  border: 1px solid rgba(29, 205, 211, 0.18);
+  border-radius: 22px;
+  overflow: hidden;
+  box-shadow:
+    0 32px 80px rgba(0, 0, 0, 0.6),
+    0 0 60px rgba(29, 205, 211, 0.07);
+}
+
+.rg-popup-glow-line {
+  position: absolute;
+  top: 0; left: 10%; right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg,
+    rgba(29,205,211,0) 0%,
+    rgba(29,205,211,0.55) 50%,
+    rgba(29,205,211,0) 100%);
+  pointer-events: none;
+}
+
+.rg-popup-header {
+  padding: 26px 32px 0;
+  text-align: center;
+}
+
+.rg-popup-brand {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  line-height: 1;
+  margin-bottom: 5px;
+}
+
+.rg-popup-brand-read { color: #1dcdd3; }
+.rg-popup-brand-glow { color: #d9e5ef; }
+
+.rg-popup-subtitle {
+  margin: 0;
+  font-size: 13px;
+  color: rgba(148, 164, 180, 0.8);
+  font-weight: 500;
+}
+
+.rg-popup-body {
+  padding: 20px 32px 26px;
+  display: flex;
+  flex-direction: column;
+}
+
+.rg-popup-welcome {
+  font-size: 17px;
+  font-weight: 700;
+  color: #d9e5ef;
+  margin-bottom: 3px;
+  letter-spacing: -0.3px;
+}
+
+.rg-popup-desc {
+  font-size: 13px;
+  color: rgba(148, 164, 180, 0.75);
+  margin-bottom: 20px;
+  line-height: 1.4;
+}
+
+.rg-field { margin-bottom: 13px; }
+
+.rg-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  color: #d9e5ef;
+  margin-bottom: 6px;
+}
+
+.rg-input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(122, 187, 218, 0.18);
+  border-radius: 9px;
+  padding: 9px 13px;
+  font-size: 14px;
+  color: #d9e5ef;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  -webkit-appearance: none;
+}
+
+.rg-input::placeholder { color: rgba(148, 164, 180, 0.45); }
+
+.rg-input:focus {
+  border-color: rgba(29, 205, 211, 0.55);
+  background: rgba(29, 205, 211, 0.04);
+  box-shadow: 0 0 0 3px rgba(29, 205, 211, 0.12);
+}
+
+.rg-input:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.rg-popup-error {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--coral);
+  min-height: 16px;
+  margin-bottom: 4px;
+}
+
+.rg-popup-btn {
+  width: 100%;
+  margin-top: 6px;
+  padding: 11px;
+  background: linear-gradient(135deg, #1dcdd3 0%, #18bcc2 100%);
+  border: none;
+  border-radius: 10px;
+  color: #061018;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+  letter-spacing: -0.2px;
+  box-shadow: 0 0 24px rgba(29, 205, 211, 0.32), 0 3px 10px rgba(0, 0, 0, 0.22);
+  transition: filter 0.18s ease, transform 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.rg-popup-btn:hover  { filter: brightness(1.06); transform: translateY(-1px); }
+.rg-popup-btn:active { transform: scale(0.98); }
+.rg-popup-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+.rg-popup-signup {
+  margin: 14px 0 0;
+  text-align: center;
+  font-size: 13px;
+  color: rgba(148, 164, 180, 0.7);
+}
+
+.rg-popup-signup-link {
+  color: #1dcdd3;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.rg-popup-signup-link:hover { text-decoration: underline; }
+
+.rg-text-link {
+  background: none;
+  border: none;
+  color: rgba(148, 164, 180, 0.65);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.15s ease;
+}
+
+.rg-text-link:hover { color: #1dcdd3; }
+
+.rg-popup-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 28px;
+  height: 28px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(122, 187, 218, 0.16);
+  border-radius: 50%;
+  color: rgba(148, 164, 180, 0.8);
+  font-size: 11px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.18s ease, color 0.18s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.rg-popup-close:hover { background: rgba(255,255,255,0.13); color: #d9e5ef; }
+
+@media (max-width: 480px) {
+  .rg-popup-card    { border-radius: 18px; }
+  .rg-popup-header  { padding: 22px 22px 0; }
+  .rg-popup-body    { padding: 18px 22px 22px; }
+}
+
+/* ══════════════════════════════════════════════
+   UppHátt — Parent Dashboard
+   ══════════════════════════════════════════════ */
+
+/* ── CSS Variables — Dark (default) ── */
+#screen-parent-home {
+  --ph-bg:          #07101e;
+  --ph-tile:        rgba(7, 16, 30, 0.7);
+  --ph-tile-border: rgba(29, 205, 211, 0.12);
+  --ph-text:        #d9e5ef;
+  --ph-soft:        #7a8fa0;
+  --ph-accent:      #1dcdd3;
+  --ph-accent-dim:  rgba(29, 205, 211, 0.15);
+  --ph-dot-empty:   rgba(255,255,255,0.06);
+  --ph-dot-low:     rgba(29,205,211,0.25);
+  --ph-dot-mid:     rgba(29,205,211,0.55);
+  --ph-dot-full:    #1dcdd3;
+  --ph-stat-bg:     rgba(29,205,211,0.07);
+  --ph-tab-bg:      rgba(255,255,255,0.04);
+  --ph-tab-active:  rgba(255,255,255,0.08);
+  --ph-rec-border:  rgba(255,255,255,0.07);
+  --ph-clip-bg:     rgba(29,205,211,0.08);
+  --ph-clip-border: rgba(29,205,211,0.25);
+}
+
+/* ── CSS Variables — Light ── */
+#screen-parent-home.ph-light {
+  --ph-bg:          #f0f4f8;
+  --ph-tile:        #ffffff;
+  --ph-tile-border: rgba(0,0,0,0.07);
+  --ph-text:        #1a2332;
+  --ph-soft:        #6b7a8d;
+  --ph-accent:      #0b9ea4;
+  --ph-accent-dim:  rgba(11,158,164,0.1);
+  --ph-dot-empty:   rgba(0,0,0,0.07);
+  --ph-dot-low:     rgba(11,158,164,0.25);
+  --ph-dot-mid:     rgba(11,158,164,0.55);
+  --ph-dot-full:    #0b9ea4;
+  --ph-stat-bg:     rgba(11,158,164,0.07);
+  --ph-tab-bg:      rgba(0,0,0,0.04);
+  --ph-tab-active:  rgba(0,0,0,0.08);
+  --ph-rec-border:  rgba(0,0,0,0.08);
+  --ph-clip-bg:     rgba(11,158,164,0.07);
+  --ph-clip-border: rgba(11,158,164,0.3);
+}
+
+/* ── Screen ── */
+.ph-screen {
+  background: var(--ph-bg);
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
+/* ── Topbar ── */
+.ph-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: rgba(0,0,0,0.2);
+  border-bottom: 1px solid var(--ph-tile-border);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  backdrop-filter: blur(8px);
+}
+
+.ph-topbar-left { display: flex; flex-direction: column; gap: 2px; }
+.ph-topbar-right { display: flex; align-items: center; gap: 10px; }
+
+.ph-brand {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  line-height: 1;
+}
+.ph-brand-upp  { color: var(--ph-accent); }
+.ph-brand-hatt { color: var(--ph-text); }
+
+.ph-user-email {
+  font-size: 11px;
+  color: var(--ph-soft);
+  font-weight: 500;
+}
+
+.ph-theme-btn {
+  background: var(--ph-accent-dim);
+  border: 1px solid var(--ph-tile-border);
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
+}
+.ph-theme-btn:hover { background: var(--ph-accent-dim); filter: brightness(1.2); }
+
+.ph-signout-btn {
+  background: none;
+  border: 1px solid var(--ph-tile-border);
+  border-radius: 8px;
+  padding: 7px 12px;
+  color: var(--ph-soft);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+.ph-signout-btn:hover { color: var(--ph-text); border-color: var(--ph-soft); }
+
+/* ── Body ── */
+.ph-body {
+  flex: 1;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 960px;
+  width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+/* ── Tiles ── */
+.ph-tile {
+  background: var(--ph-tile);
+  border: 1px solid var(--ph-tile-border);
+  border-radius: 16px;
+  padding: 16px;
+}
+
+.ph-tile-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.ph-tile-left {
+  padding: 16px;
+  border-right: 1px solid var(--ph-tile-border);
+}
+
+.ph-tile-right {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.ph-tile-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ph-tile-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ph-text);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ph-tile-title svg { stroke: var(--ph-accent); }
+
+.ph-tile-sub {
+  font-size: 12px;
+  color: var(--ph-soft);
+}
+
+.ph-tile-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--ph-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-bottom: 8px;
+}
+
+/* ── Add child button ── */
+.ph-add-btn {
+  background: var(--ph-accent-dim);
+  border: 1px solid var(--ph-clip-border);
+  border-radius: 8px;
+  padding: 6px 12px;
+  color: var(--ph-accent);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: filter 0.15s ease;
+  white-space: nowrap;
+}
+.ph-add-btn:hover { filter: brightness(1.15); }
+
+/* ── Child cards row ── */
+.ph-children-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.ph-child-card {
+  background: var(--ph-accent-dim);
+  border: 1px solid var(--ph-tile-border);
+  border-radius: 12px;
+  padding: 12px 14px;
+  cursor: pointer;
+  text-align: center;
+  min-width: 90px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.ph-child-card:hover {
+  border-color: rgba(29,205,211,0.3);
+}
+
+.ph-child-selected {
+  border-color: var(--ph-accent) !important;
+  box-shadow: 0 0 0 1px var(--ph-accent), 0 0 16px rgba(29,205,211,0.2);
+}
+
+.ph-child-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 8px;
+}
+.ph-child-avatar svg { stroke: var(--ph-soft); }
+
+.ph-child-avatar-active {
+  background: var(--ph-accent);
+}
+.ph-child-avatar-active svg { stroke: #061018; }
+
+.ph-child-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ph-text);
+  margin-bottom: 3px;
+}
+
+.ph-child-code {
+  font-size: 11px;
+  color: var(--ph-accent);
+  font-weight: 600;
+  letter-spacing: 1px;
+  margin-bottom: 3px;
+}
+
+.ph-child-sessions {
+  font-size: 10px;
+  color: var(--ph-soft);
+}
+
+.ph-child-today {
+  font-size: 10px;
+  color: var(--ph-accent);
+  font-weight: 700;
+  margin-top: 4px;
+}
+
+.ph-no-children {
+  font-size: 13px;
+  color: var(--ph-soft);
+  padding: 12px 0;
+}
+
+.ph-loading {
+  font-size: 13px;
+  color: var(--ph-soft);
+}
+
+/* ── Fjölskyldukóði ── */
+.ph-family-code-wrap { }
+
+.ph-family-code {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--ph-accent);
+  letter-spacing: 3px;
+  font-family: Georgia, serif;
+  margin-bottom: 4px;
+}
+
+.ph-family-code-hint {
+  font-size: 11px;
+  color: var(--ph-soft);
+  line-height: 1.4;
+}
+
+/* ── 7 daga grid ── */
+.ph-week-grid {
+  display: flex;
+  gap: 6px;
+}
+
+.ph-wday-cell {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.ph-wday-lbl {
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--ph-soft);
+  text-transform: uppercase;
+}
+
+.ph-wday-today { color: var(--ph-accent); }
+
+.ph-wdot {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 6px;
+  background: var(--ph-dot-empty);
+  transition: background 0.2s ease;
+}
+
+.ph-wdot-empty { background: var(--ph-dot-empty); }
+.ph-wdot-low   { background: var(--ph-dot-low); }
+.ph-wdot-mid   { background: var(--ph-dot-mid); }
+.ph-wdot-full  { background: var(--ph-dot-full); }
+.ph-wdot-today { outline: 2px solid var(--ph-accent); outline-offset: 1px; }
+
+/* ── Stats ── */
+.ph-stats-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+}
+
+.ph-stat-card {
+  background: var(--ph-tile);
+  border: 1px solid var(--ph-tile-border);
+  border-radius: 16px;
+  padding: 20px 16px;
+  text-align: center;
+}
+
+.ph-stat-val {
+  font-size: 36px;
+  font-weight: 800;
+  color: var(--ph-accent);
+  line-height: 1;
+  margin-bottom: 6px;
+  font-family: Georgia, serif;
+}
+
+.ph-stat-lbl {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ph-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ── Tabs ── */
+.ph-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  background: var(--ph-tab-bg);
+  border: 1px solid var(--ph-tile-border);
+  border-radius: 12px;
+  padding: 4px;
+}
+
+.ph-tab {
+  background: none;
+  border: none;
+  border-radius: 9px;
+  padding: 10px 16px;
+  color: var(--ph-soft);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.ph-tab svg { stroke: currentColor; }
+
+.ph-tab-active {
+  background: var(--ph-tab-active);
+  color: var(--ph-text);
+  border: 1px solid var(--ph-accent);
+}
+
+/* ── Calendar ── */
+.ph-calendar-legend {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.ph-dot-eg {
+  width: 11px;
+  height: 11px;
+  border-radius: 3px;
+  display: inline-block;
+}
+
+.ph-dot-none { background: var(--ph-dot-empty); }
+.ph-dot-low  { background: var(--ph-dot-low); }
+.ph-dot-mid  { background: var(--ph-dot-mid); }
+.ph-dot-full { background: var(--ph-dot-full); }
+
+.ph-legend-lbl {
+  font-size: 10px;
+  color: var(--ph-soft);
+  font-weight: 500;
+}
+
+.ph-calendar-days-row {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  margin-bottom: 4px;
+}
+
+.ph-cal-day-lbl {
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--ph-soft);
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.ph-calendar-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ph-cal-row {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.ph-cal-dot {
+  aspect-ratio: 1;
+  border-radius: 4px;
+  transition: transform 0.1s ease;
+}
+
+.ph-cal-dot:hover { transform: scale(1.15); }
+
+.ph-cal-dot-empty { background: var(--ph-dot-empty); }
+.ph-cal-dot-low   { background: var(--ph-dot-low); }
+.ph-cal-dot-mid   { background: var(--ph-dot-mid); }
+.ph-cal-dot-full  { background: var(--ph-dot-full); }
+.ph-cal-dot-today { outline: 2px solid var(--ph-accent); outline-offset: 1px; }
+
+.ph-calendar-empty {
+  text-align: center;
+  font-size: 13px;
+  color: var(--ph-soft);
+  padding: 20px 0 8px;
+  line-height: 1.5;
+}
+
+/* ── Recordings ── */
+.ph-rec-empty {
+  text-align: center;
+  font-size: 13px;
+  color: var(--ph-soft);
+  padding: 24px 0;
+  line-height: 1.5;
+}
+
+.ph-rec-item {
+  border-bottom: 1px solid var(--ph-rec-border);
+}
+
+.ph-rec-item:last-child { border-bottom: none; }
+
+.ph-rec-header {
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 12px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  color: var(--ph-text);
+  text-align: left;
+}
+
+.ph-rec-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ph-text);
+}
+
+.ph-rec-label svg { stroke: var(--ph-accent); flex-shrink: 0; }
+
+.ph-rec-chevron {
+  font-size: 18px;
+  color: var(--ph-soft);
+  transition: transform 0.2s ease;
+  line-height: 1;
+}
+
+.ph-rec-clips {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  padding: 0 0 14px;
+}
+
+.ph-clip-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ph-clip-btn {
+  background: var(--ph-clip-bg);
+  border: 1px solid var(--ph-clip-border);
+  border-radius: 9px;
+  padding: 9px 6px;
+  color: var(--ph-accent);
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  text-align: center;
+  transition: filter 0.15s ease, background 0.15s ease;
+  width: 100%;
+}
+
+.ph-clip-btn:hover { filter: brightness(1.15); }
+
+.ph-clip-playing {
+  background: var(--ph-accent);
+  color: #061018;
+}
+
+.ph-clip-disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.ph-clip-player {
+  display: none;
+}
+
+.ph-clip-player audio {
+  width: 100%;
+  border-radius: 6px;
+}
+
+.ph-clip-loading {
+  font-size: 10px;
+  color: var(--ph-soft);
+  padding: 4px;
+}
+
+.ph-clip-error {
+  font-size: 10px;
+  color: #FF6B6B;
+  padding: 4px;
+}
+
+.ph-listen-status {
+  font-size: 10px;
+  color: var(--ph-accent);
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+/* ── Mobile ── */
+@media (max-width: 600px) {
+  .ph-tile-split {
+    grid-template-columns: 1fr;
+  }
+  .ph-tile-left {
+    border-right: none;
+    border-bottom: 1px solid var(--ph-tile-border);
+  }
+  .ph-stats-row {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+  .ph-stat-val { font-size: 26px; }
+  .ph-rec-clips { grid-template-columns: repeat(2, 1fr); }
+  .ph-body { padding: 12px; }
+  .ph-topbar { padding: 12px 14px; }
+}
+
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="screen-login" class="screen active">
+  <div class="scroll-body" style="display:flex;align-items:center;justify-content:center;min-height:100vh;">
+    <div style="width:100%;max-width:380px">
+      <div style="text-align:center;margin-bottom:28px">
+        <div style="font-family:Georgia,serif;font-size:56px;font-weight:700;color:var(--ocean)">Upphátt</div>
+        <div style="font-size:14px;color:var(--mist);font-weight:600">Íslenskt lestrarforrit</div>
+      </div>
+      <div class="grid2">
+        <button class="choice blue" onclick="goTo('screen-parent-login')">
+          <span class="big">👩</span><span class="title">Ég er foreldri</span><div class="sub">Netfang + lykilorð</div>
+        </button>
+        <button class="choice green" onclick="goTo('screen-child-login')">
+          <span class="big">👦</span><span class="title">Ég er barn</span><div class="sub">Kóði frá foreldri</div>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PARENT LOGIN -->
+<div id="screen-parent-login" class="screen">
+  <div class="topbar">
+    <button class="back-btn" onclick="goTo('screen-login')">← Til baka</button>
+    <div class="logo"><div class="logo-icon">U</div> Upphátt</div>
+    <div></div>
+  </div>
+  <div class="scroll-body">
+    <div class="hero purple">
+      <div class="hero-label">Foreldri</div>
+      <h1>Velkomin/n</h1>
+      <p>Skráðu þig inn og fylgstu með í rauntíma.</p>
+    </div>
+    <div class="card">
+      <div class="form-group"><label>Netfang</label><input id="login-email" type="email" autocomplete="email" placeholder="þu@dæmi.is"></div>
+      <div class="form-group"><label>Lykilorð</label><input id="login-pw" type="password" autocomplete="current-password" placeholder="••••••••"></div>
+      <div id="login-error" class="notice" style="color:var(--coral);margin-bottom:10px"></div>
+      <button class="btn btn-primary" onclick="firebaseLogin()">🔑 Skrá inn</button>
+    </div>
+  </div>
+</div>
+
+<!-- CHILD LOGIN -->
+<div id="screen-child-login" class="screen">
+  <div class="topbar">
+    <button class="back-btn" onclick="goTo('screen-login')">← Til baka</button>
+    <div class="logo"><div class="logo-icon">U</div> Upphátt</div>
+    <div></div>
+  </div>
+  <div class="scroll-body">
+    <div class="hero green">
+      <div class="hero-label">Barn</div>
+      <h1>Sláðu inn kóðann þinn 🎯</h1>
+      <p>Foreldri þitt gaf þér þennan kóða.</p>
+    </div>
+    <div class="card">
+      <div class="form-group">
+        <label>Kóðinn þinn</label>
+        <input id="child-code-input" type="text" maxlength="6"
+          autocomplete="off" autocapitalize="characters" inputmode="text" enterkeyhint="done"
+          style="font-family:Georgia,serif;font-size:32px;font-weight:700;letter-spacing:6px;text-align:center;text-transform:uppercase"
+          oninput="this.value=this.value.toUpperCase()"
+          readonly
+          ontouchstart="this.removeAttribute('readonly');this.focus();"
+          onclick="this.removeAttribute('readonly');this.focus();"
+          onpaste="return false" ondrop="return false">
+      </div>
+      <div id="child-code-error" class="notice" style="color:var(--coral);text-align:center;margin-bottom:10px"></div>
+      <button class="btn btn-success" onclick="childLogin()">🎯 Skrá mig inn</button>
+    </div>
+    <div style="background:#e8f4fd;border-radius:12px;padding:12px 14px;margin-top:4px;font-size:12px;color:var(--ocean);font-weight:700;text-align:center;">
+      💡 Þú þarft aðeins að slá inn kóðann einu sinni — tækið man eftir þér!
+    </div>
+    <div style="text-align:center;margin-top:20px">
+      <button onclick="openParentLoginPopup()" style="background:none;border:none;color:rgba(138,155,176,0.7);font-size:13px;font-weight:500;cursor:pointer;padding:6px 12px">
+        Foreldrar og forsjáraðilar hingað ↗
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- CHILD HOME -->
+<div id="screen-child-home" class="screen">
+  <div class="topbar">
+    <button class="back-btn" onclick="logout()">← Út</button>
+    <div class="logo"><div class="logo-icon">U</div> Upphátt</div>
+    <div class="pill" id="child-name-pill">Barn</div>
+  </div>
+  <div class="scroll-body">
+
+    <!-- Hero með streak -->
+    <div class="hero green" id="child-hero-card">
+      <div class="hero-label">Hæ!</div>
+      <h1 id="child-hero">Ertu tilbúinn að lesa? 🌟</h1>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+        <div id="child-streak" style="display:none;background:rgba(255,184,48,0.25);border:1.5px solid rgba(255,184,48,0.6);border-radius:50px;padding:5px 14px;font-size:13px;font-weight:800;color:#fff">
+          🔥 <span id="streak-num">0</span> daga röð
+        </div>
+        <div id="child-shields" style="display:none;background:rgba(255,255,255,0.2);border-radius:50px;padding:5px 14px;font-size:13px;font-weight:800;color:#fff">
+          🛡️ <span id="shields-num">0</span> frídagar
+        </div>
+      </div>
+    </div>
+
+    <!-- Skjaldaboð — ef streak í hættu -->
+    <div id="shield-warning" style="display:none;background:#fff3cd;border-radius:14px;padding:14px;margin-bottom:12px;border-left:4px solid var(--sun)">
+      <div style="font-size:13px;font-weight:800;color:#856404">⚠️ Streak í hættu!</div>
+      <div style="font-size:12px;color:#856404;margin-top:3px" id="shield-warning-text">Les í dag til að halda röðinni.</div>
+    </div>
+
+    <!-- Vikudottar -->
+    <div class="card" id="child-week-card">
+      <div style="font-size:11px;font-weight:800;color:var(--mist);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Þessi vika — markmið: 15 mín/dag</div>
+      <div class="week-dots" id="child-week-dots"></div>
+    </div>
+
+    <!-- Verðlaun milestone -->
+    <div id="milestone-card" style="display:none;background:linear-gradient(135deg,var(--sun),#e8900a);border-radius:18px;padding:18px;margin-bottom:12px;text-align:center;color:var(--deep)">
+      <div style="font-size:36px;margin-bottom:6px" id="milestone-icon">🌱</div>
+      <div style="font-family:Georgia,serif;font-size:18px;font-weight:700" id="milestone-title">Verðlaun!</div>
+      <div style="font-size:13px;margin-top:4px;font-weight:600;opacity:.8" id="milestone-text"></div>
+    </div>
+
+    <!-- Setja upp lestrarlotur -->
+    <div class="card" id="setup-card">
+      <div style="font-size:13px;font-weight:800;color:var(--deep);margin-bottom:12px">Setja upp lestrarlotur</div>
+      <div class="form-group">
+        <label>Heiti bókar (valfrjálst)</label>
+        <input id="read-title" type="text" placeholder="t.d. Harry Potter">
+      </div>
+      <div class="form-group">
+        <label>Byrjunarblaðsíða (valfrjálst)</label>
+        <input id="page-start" type="number" min="1" placeholder="t.d. 42" inputmode="numeric">
+      </div>
+      <div style="font-size:11px;font-weight:800;color:var(--deep);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Tímamælir</div>
+      <div class="mode-picker">
+        <button class="mode-btn active" id="mode-down" onclick="setMode('down')">⏳ Niðurtalning<br><span style="font-size:10px;font-weight:600;opacity:.7">15:00 → 0:00</span></button>
+        <button class="mode-btn" id="mode-up" onclick="setMode('up')">⏱ Upptalning<br><span style="font-size:10px;font-weight:600;opacity:.7">0:00 → 15:00+</span></button>
+      </div>
+      <button class="btn btn-primary" onclick="startReading()">🎤 Byrja að lesa</button>
+    </div>
+
+    <!-- Tíminn í gangi -->
+    <div class="card" id="reading-card" style="display:none">
+      <div class="timer-wrap">
+        <div class="timer-big" id="timer-display">15:00</div>
+        <div class="timer-sub"><span class="rec-dot"></span><span id="timer-status">Les upphátt…</span></div>
+      </div>
+      <div style="font-size:11px;color:var(--mist);font-weight:700;text-align:center;margin-bottom:16px" id="audio-status"></div>
+      <button class="btn btn-success" onclick="stopReading()">⏹ Klára lestrarlotur</button>
+      <button class="btn btn-ghost" onclick="cancelReading()" style="margin-top:10px">Hætta við</button>
+    </div>
+
+    <!-- Lokaskjár -->
+    <div class="card" id="finish-card" style="display:none">
+      <div style="text-align:center;margin-bottom:16px">
+        <div style="font-size:48px" id="finish-emoji">🎉</div>
+        <div style="font-family:Georgia,serif;font-size:22px;font-weight:700;color:var(--deep)" id="finish-title">Frábær lestur!</div>
+        <div style="font-size:13px;color:var(--mist);margin-top:4px" id="finish-sub"></div>
+      </div>
+      <div class="form-group">
+        <label>Hvaða blaðsíðu ertu kominn á? (valfrjálst)</label>
+        <input id="page-end" type="number" min="1" placeholder="t.d. 58" inputmode="numeric">
+      </div>
+      <div id="pages-display" style="text-align:center;font-size:13px;color:var(--moss);font-weight:800;margin-bottom:12px;min-height:20px"></div>
+      <div id="save-error" class="notice" style="color:var(--coral);margin-bottom:8px"></div>
+      <button class="btn btn-primary" onclick="saveSession()">✅ Vista og klára</button>
+      <button class="btn btn-ghost" onclick="skipSave()" style="margin-top:10px">Sleppa blaðsíðutali</button>
+    </div>
+
+    <!-- Síðustu lotur -->
+    <div id="child-sessions-wrap" style="display:none">
+      <div style="font-size:11px;font-weight:800;color:var(--mist);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Síðustu lotur</div>
+      <div class="card" id="child-sessions-list"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- PARENT HOME -->
+<div id="screen-parent-home" class="screen ph-screen">
+
+  <!-- Hidden legacy elements — JS skrifar í þá, við lesum úr þeim -->
+  <div style="display:none">
+    <div id="parent-pill"></div>
+    <div id="parent-hero"></div>
+    <div id="codes-panel"><div id="codes-list"></div></div>
+    <button id="codes-toggle-btn"></button>
+    <div id="parent-content"></div>
+  </div>
+
+  <!-- ── Topbar ── -->
+  <div class="ph-topbar">
+    <div class="ph-topbar-left">
+      <div class="ph-brand">
+        <span class="ph-brand-upp">Upp</span><span class="ph-brand-hatt">Hátt</span>
+      </div>
+      <div class="ph-user-email" id="ph-user-email"></div>
+    </div>
+    <div class="ph-topbar-right">
+      <button class="ph-theme-btn" id="ph-theme-btn" onclick="toggleParentTheme()" aria-label="Skipta um þema">☀️</button>
+      <button class="ph-signout-btn" onclick="logout()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Útskrá
+      </button>
+    </div>
+  </div>
+
+  <!-- ── Body ── -->
+  <div class="ph-body">
+
+    <!-- TILE 1 — Börn + Fjölskylda -->
+    <div class="ph-tile ph-tile-split">
+
+      <!-- Vinstri: Börn -->
+      <div class="ph-tile-left">
+        <div class="ph-tile-header">
+          <div class="ph-tile-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            Börn þín
+          </div>
+          <button class="ph-add-btn" onclick="openAddChildPopup()">+ Bæta við barni</button>
+        </div>
+        <div class="ph-children-row" id="ph-children-row">
+          <div class="ph-loading">Hleður...</div>
+        </div>
+      </div>
+
+      <!-- Hægri: Fjölskylda -->
+      <div class="ph-tile-right">
+        <div class="ph-family-code-wrap">
+          <div class="ph-tile-label">Fjölskyldukóði</div>
+          <div class="ph-family-code" id="ph-family-code">—</div>
+          <div class="ph-family-code-hint">Gefðu þennan kóða öðrum fjölskyldumeðlimum</div>
+        </div>
+        <div class="ph-week-wrap">
+          <div class="ph-tile-label">Síðustu 7 dagar</div>
+          <div class="ph-week-grid" id="ph-week-grid"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- STATS — 3 kort -->
+    <div class="ph-stats-row">
+      <div class="ph-stat-card">
+        <div class="ph-stat-val" id="ph-stat-mins">0</div>
+        <div class="ph-stat-lbl">Mínútur</div>
+      </div>
+      <div class="ph-stat-card">
+        <div class="ph-stat-val" id="ph-stat-sessions">0</div>
+        <div class="ph-stat-lbl">Lotur</div>
+      </div>
+      <div class="ph-stat-card">
+        <div class="ph-stat-val" id="ph-stat-clips">0</div>
+        <div class="ph-stat-lbl">Klippingar</div>
+      </div>
+    </div>
+
+    <!-- TABS -->
+    <div class="ph-tabs">
+      <button class="ph-tab ph-tab-active" id="ph-tab-activity" onclick="switchTab('activity')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Iðkun
+      </button>
+      <button class="ph-tab" id="ph-tab-recordings" onclick="switchTab('recordings')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
+        Upptökur
+      </button>
+    </div>
+
+    <!-- ACTIVITY TAB -->
+    <div class="ph-tab-content" id="ph-content-activity">
+      <div class="ph-tile">
+        <div class="ph-tile-header" style="margin-bottom:16px">
+          <div class="ph-tile-title">Lestrarferðalag</div>
+          <div class="ph-calendar-legend">
+            <span class="ph-dot-eg ph-dot-none"></span>
+            <span class="ph-legend-lbl">Minna</span>
+            <span class="ph-dot-eg ph-dot-low"></span>
+            <span class="ph-dot-eg ph-dot-mid"></span>
+            <span class="ph-dot-eg ph-dot-full"></span>
+            <span class="ph-legend-lbl">Meira</span>
+          </div>
+        </div>
+        <div class="ph-calendar-days-row" id="ph-calendar-days"></div>
+        <div class="ph-calendar-grid" id="ph-calendar-grid"></div>
+        <div class="ph-calendar-empty" id="ph-calendar-empty" style="display:none">
+          Engar lotur enn. Lotur birtast hér þegar barnið byrjar að lesa!
+        </div>
+      </div>
+    </div>
+
+    <!-- RECORDINGS TAB -->
+    <div class="ph-tab-content" id="ph-content-recordings" style="display:none">
+      <div class="ph-tile">
+        <div class="ph-tile-header" style="margin-bottom:16px">
+          <div class="ph-tile-title">Hljóðupptökur</div>
+          <div class="ph-tile-sub" id="ph-rec-subtitle">15 sek klippingar úr hverri lotu</div>
+        </div>
+        <div id="ph-recordings-list">
+          <div class="ph-rec-empty">Engar upptökur enn. Klippingar birtast hér eftir lestrarlotur!</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /ph-body -->
+</div><!-- /screen-parent-home -->
+
+<!-- ═══════════════════════════════════════
+     POPUP 1 — PARENT LOGIN (3 views)
+     ═══════════════════════════════════════ -->
+<div id="parent-login-popup" class="modal-overlay" style="display:none">
+  <div class="rg-popup-card">
+
+    <div class="rg-popup-glow-line"></div>
+    <button class="rg-popup-close" onclick="closeParentLoginPopup()" aria-label="Loka">✕</button>
+
+    <div class="rg-popup-header">
+      <div class="rg-popup-brand">
+        <span class="rg-popup-brand-read">Upp</span><span class="rg-popup-brand-glow">Hátt</span>
+      </div>
+      <p class="rg-popup-subtitle" id="login-popup-subtitle">Foreldri innskráning</p>
+    </div>
+
+    <!-- View A: Login -->
+    <div id="login-view-a" class="rg-popup-body">
+      <div class="rg-popup-welcome">Velkomin/n aftur</div>
+      <div class="rg-popup-desc">Skráðu þig inn til að fylgjast með lestri barns þíns</div>
+
+      <div class="rg-field">
+        <label class="rg-label" for="popup-login-email">Netfang</label>
+        <input id="popup-login-email" class="rg-input" type="email"
+          autocomplete="email" placeholder="foreldri@dæmi.is">
+      </div>
+      <div class="rg-field">
+        <label class="rg-label" for="popup-login-pw">Lykilorð</label>
+        <input id="popup-login-pw" class="rg-input" type="password"
+          autocomplete="current-password" placeholder="••••••••">
+      </div>
+
+      <div style="text-align:right;margin:-6px 0 12px">
+        <button onclick="showForgotPassword()" class="rg-text-link">Gleymt lykilorð?</button>
+      </div>
+
+      <div id="popup-login-error" class="rg-popup-error"></div>
+
+      <button class="rg-popup-btn" onclick="parentLoginFromPopup()">Skrá inn</button>
+
+      <p class="rg-popup-signup">
+        Ertu ekki með reikning? <span onclick="openSignupPopup()" class="rg-popup-signup-link">Nýskrá hér</span>
+      </p>
+    </div>
+
+    <!-- View B: Gleymt lykilorð -->
+    <div id="login-view-b" class="rg-popup-body" style="display:none">
+      <div class="rg-popup-welcome">Gleymt lykilorð?</div>
+      <div class="rg-popup-desc">Sláðu inn netfangið þitt og við sendum þér link til að endurstilla lykilorðið</div>
+
+      <div class="rg-field">
+        <label class="rg-label" for="reset-email">Netfang</label>
+        <input id="reset-email" class="rg-input" type="email"
+          autocomplete="email" placeholder="foreldri@dæmi.is">
+      </div>
+
+      <div id="reset-error" class="rg-popup-error"></div>
+
+      <button class="rg-popup-btn" onclick="sendPasswordReset()">Senda link</button>
+
+      <p class="rg-popup-signup">
+        <span onclick="backToLogin()" class="rg-popup-signup-link">← Til baka</span>
+      </p>
+    </div>
+
+    <!-- View C: Link sendur -->
+    <div id="login-view-c" class="rg-popup-body" style="display:none">
+      <div style="text-align:center;padding:12px 0 20px">
+        <div style="font-size:44px;margin-bottom:14px">📬</div>
+        <div class="rg-popup-welcome" style="text-align:center">Link sendur!</div>
+        <div class="rg-popup-desc" style="text-align:center;margin-top:6px">
+          Athugaðu tölvupóstinn þinn og fylgdu leiðbeiningunum til að endurstilla lykilorðið
+        </div>
+      </div>
+      <button class="rg-popup-btn" onclick="backToLogin()">← Til baka í innskráningu</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     POPUP 2 — SIGNUP
+     ═══════════════════════════════════════ -->
+<div id="parent-signup-popup" class="modal-overlay" style="display:none">
+  <div class="rg-popup-card">
+
+    <div class="rg-popup-glow-line"></div>
+    <button class="rg-popup-close" onclick="closeSignupPopup()" aria-label="Loka">✕</button>
+
+    <div class="rg-popup-header">
+      <div class="rg-popup-brand">
+        <span class="rg-popup-brand-read">Upp</span><span class="rg-popup-brand-glow">Hátt</span>
+      </div>
+      <p class="rg-popup-subtitle">Stofna aðgang</p>
+    </div>
+
+    <!-- Signup form -->
+    <div id="signup-view-form" class="rg-popup-body">
+      <div class="rg-popup-welcome">Byrjaðu hér</div>
+      <div class="rg-popup-desc">Stofnaðu aðgang til að fylgjast með lestri barns þíns</div>
+
+      <div class="rg-field">
+        <label class="rg-label" for="su-name">Fullt nafn</label>
+        <input id="su-name" class="rg-input" type="text"
+          autocomplete="name" placeholder="Nafn Nafnsson">
+      </div>
+      <div class="rg-field">
+        <label class="rg-label" for="su-email">Netfang</label>
+        <input id="su-email" class="rg-input" type="email"
+          autocomplete="email" placeholder="foreldri@dæmi.is">
+      </div>
+      <div class="rg-field">
+        <label class="rg-label" for="su-pw">Lykilorð</label>
+        <input id="su-pw" class="rg-input" type="password"
+          autocomplete="new-password" placeholder="Minnst 6 stafir">
+      </div>
+      <div class="rg-field">
+        <label class="rg-label" for="su-pw2">Staðfesta lykilorð</label>
+        <input id="su-pw2" class="rg-input" type="password"
+          autocomplete="new-password" placeholder="••••••••">
+      </div>
+
+      <div id="signup-error" class="rg-popup-error"></div>
+
+      <button class="rg-popup-btn" onclick="firebaseSignupPopup()">Stofna aðgang</button>
+
+      <p class="rg-popup-signup">
+        Ertu þegar með reikning? <span onclick="backToLoginFromSignup()" class="rg-popup-signup-link">Innskrá hér</span>
+      </p>
+    </div>
+
+    <!-- Signup success -->
+    <div id="signup-view-success" class="rg-popup-body" style="display:none">
+      <div style="text-align:center;padding:12px 0 20px">
+        <div style="font-size:44px;margin-bottom:14px">📧</div>
+        <div class="rg-popup-welcome" style="text-align:center">Athugaðu tölvupóstinn!</div>
+        <div class="rg-popup-desc" style="text-align:center;margin-top:6px">
+          Við sendum þér staðfestingarpóst. Smelltu á linkinn í póstinum til að virkja aðganginn þinn.
+        </div>
+      </div>
+      <button class="rg-popup-btn" onclick="closeSignupPopup()">Loka</button>
+    </div>
+
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp }    from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js';
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword,
+         sendEmailVerification, sendPasswordResetEmail, onAuthStateChanged, signOut }
+                             from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js';
+import { getFirestore, collection, addDoc, doc, getDoc, onSnapshot, query, where, serverTimestamp }
+                             from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js';
+import { getStorage, ref, uploadBytes, getDownloadURL }
+                             from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-storage.js';
+
+const firebaseConfig = {
+  apiKey: 'AIzaSyAgTY3Uxd9_ZxixjqLj-sH8V3OhFAzg6DU',
+  authDomain: 'lesum-22e85.firebaseapp.com',
+  projectId: 'lesum-22e85',
+  storageBucket: 'lesum-22e85.firebasestorage.app',
+  messagingSenderId: '204392598388',
+  appId: '1:204392598388:web:2dbbe3f476cd78d2ffba21'
+};
+
+const app     = initializeApp(firebaseConfig);
+const auth    = getAuth(app);
+const db      = getFirestore(app);
+const storage = getStorage(app);
+
+// ── State ──
+let currentRole      = null;
+let currentFamilyId  = null;
+let currentChildKey  = null;
+let currentChildName = null;
+let currentParentName= null;
+let familyUnsub      = null;
+let familySessions   = [];
+let timerMode        = 'down';
+let timerInterval    = null;
+let readingStartMs   = null;
+let elapsedSecs      = 0;
+let pendingSession   = null;
+const TARGET         = 15 * 60;
+let audioStream      = null;
+let audioChunks      = { start:[], mid:[], end:[] };
+let snippetTimers    = [];
+
+// ── Nav ──
+window.goTo = function(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+};
+
+// ── Helpers ──
+function fmtTime(s){ return `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`; }
+function makeDateKey(d){ return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`; }
+function formatLabel(v){
+  const d = v?.toDate ? v.toDate() : (typeof v==='number' ? new Date(v) : null);
+  if(!d||isNaN(d)) return '';
+  return d.toLocaleString('is-IS',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+}
+function getMonday(date=new Date()){
+  const d=new Date(date); d.setHours(12,0,0,0);
+  const day=d.getDay(); d.setDate(d.getDate()+(day===0?-6:1-day)); return d;
+}
+function renderWeekDots(sessions, containerId){
+  const el=document.getElementById(containerId); if(!el) return;
+  const mon=getMonday();
+  const labels=['Mán','Þri','Mið','Fim','Fös','Lau','Sun'];
+  el.innerHTML=labels.map((lbl,i)=>{
+    const d=new Date(mon); d.setDate(mon.getDate()+i);
+    const key=makeDateKey(d);
+    const mins=sessions.filter(s=>s.date===key).reduce((a,s)=>a+Math.floor((s.seconds||0)/60),0);
+    const cls=mins>=15?'full':mins>0?'partial':'none';
+    return `<div class="day-dot ${cls}"><div>${lbl}</div><div>${mins>0?mins+'m':'—'}</div></div>`;
+  }).join('');
+}
+function getStreak(sessions){
+  if(!sessions.length) return 0;
+  let streak=0; const d=new Date();
+  for(let i=0;i<90;i++){
+    const k=makeDateKey(d);
+    if(sessions.some(s=>s.date===k&&(s.seconds||0)>=60)){ streak++; d.setDate(d.getDate()-1); }
+    else if(i===0){ d.setDate(d.getDate()-1); }
+    else break;
+  }
+  return streak;
+}
+
+// ── Timer mode ──
+window.setMode = function(mode){
+  timerMode=mode;
+  document.getElementById('mode-down').className='mode-btn'+(mode==='down'?' active':'');
+  document.getElementById('mode-up').className='mode-btn'+(mode==='up'?' active':'');
+  document.getElementById('timer-display').textContent=mode==='down'?'15:00':'0:00';
+};
+
+// ── Child login ──
+window.childLogin = async function(){
+  const code=document.getElementById('child-code-input').value.trim().toUpperCase();
+  const err=document.getElementById('child-code-error');
+  err.textContent='';
+  if(code.length<4){ err.textContent='Sláðu inn kóðann þinn.'; return; }
+  try {
+    document.getElementById('child-code-input').disabled=true;
+    const snap=await getDoc(doc(db,'codes',code));
+    if(!snap.exists()){
+      err.textContent='Kóðinn fannst ekki — athugaðu með foreldri.';
+      document.getElementById('child-code-input').disabled=false; return;
+    }
+    const data=snap.data();
+    currentRole=     'child';
+    currentFamilyId= data.familyId;
+    currentChildKey= data.childKey;
+    currentChildName=data.childName;
+    localStorage.setItem('upphatt_child', JSON.stringify({
+      familyId:data.familyId, childKey:data.childKey, childName:data.childName, code
+    }));
+    setupChildHome();
+    goTo('screen-child-home');
+  } catch(e){
+    err.textContent='Villa: '+e.message;
+    document.getElementById('child-code-input').disabled=false;
+  }
+};
+
+function setupChildHome(){
+  document.getElementById('child-name-pill').textContent=currentChildName;
+  document.getElementById('child-hero').textContent=`Halló, ${currentChildName} 🌟`;
+  loadChildSessions();
+}
+
+// ── Hljóðviðbrögð ──
+function playSound(type) {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const now = ctx.currentTime;
+
+    if (type === 'done') {
+      // Þrjár hækkaðar nótur — "vel gert"
+      [[523,0],[659,0.15],[784,0.3],[1047,0.5]].forEach(([freq,delay]) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain); gain.connect(ctx.destination);
+        osc.frequency.value = freq; osc.type = 'sine';
+        gain.gain.setValueAtTime(0.3, now+delay);
+        gain.gain.exponentialRampToValueAtTime(0.001, now+delay+0.4);
+        osc.start(now+delay); osc.stop(now+delay+0.5);
+      });
+    } else if (type === 'milestone') {
+      // Fanfara — verðlaun
+      [[523,0],[659,0.1],[784,0.2],[1047,0.35],[1047,0.55]].forEach(([freq,delay]) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain); gain.connect(ctx.destination);
+        osc.frequency.value = freq; osc.type = 'triangle';
+        gain.gain.setValueAtTime(0.35, now+delay);
+        gain.gain.exponentialRampToValueAtTime(0.001, now+delay+0.5);
+        osc.start(now+delay); osc.stop(now+delay+0.6);
+      });
+    } else if (type === 'streak') {
+      // Sigurhrina
+      [[392,0],[523,0.2],[659,0.4],[784,0.6],[1047,0.8]].forEach(([freq,delay]) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain); gain.connect(ctx.destination);
+        osc.frequency.value = freq; osc.type = 'sine';
+        gain.gain.setValueAtTime(0.25, now+delay);
+        gain.gain.exponentialRampToValueAtTime(0.001, now+delay+0.6);
+        osc.start(now+delay); osc.stop(now+delay+0.7);
+      });
+    }
+  } catch(e) { /* hljóð ekki stutt */ }
+}
+
+// ── Milestones ──
+const MILESTONES = [
+  { count: 1,  icon: '🌱', title: 'Fyrsta skrefið!',    text: 'Þú kláraðir fyrstu lotuna!' },
+  { count: 5,  icon: '⭐', title: 'Fimm lotur!',         text: 'Þú ert að verða lesari!' },
+  { count: 10, icon: '🦁', title: 'Sterkur lesari!',     text: 'Tíu lotur — stórkostlegt!' },
+  { count: 20, icon: '🏆', title: 'Meistarinn!',         text: 'Tuttugu lotur — þú ert snillingur!' },
+  { count: 50, icon: '🚀', title: 'Lestrarhetja!',       text: 'Fimmtíu lotur — ótrúlegt!' },
+];
+
+function checkMilestone(totalSessions) {
+  const m = MILESTONES.find(m => m.count === totalSessions);
+  if (!m) return;
+
+  const card = document.getElementById('milestone-card');
+  document.getElementById('milestone-icon').textContent  = m.icon;
+  document.getElementById('milestone-title').textContent = m.title;
+  document.getElementById('milestone-text').textContent  = m.text;
+  card.style.display = '';
+
+  // Fela eftir 8 sek
+  setTimeout(() => { card.style.display = 'none'; }, 8000);
+  setTimeout(() => playSound('milestone'), 300);
+}
+
+// ── Skjaldakerfi ──
+function getShields() {
+  return parseInt(localStorage.getItem('upphatt_shields_' + currentChildKey) || '0');
+}
+function setShields(n) {
+  localStorage.setItem('upphatt_shields_' + currentChildKey, Math.max(0, n));
+}
+function checkAndGrantShield(streak) {
+  const given = parseInt(localStorage.getItem('upphatt_shields_given_' + currentChildKey) || '0');
+  const earned = Math.floor(streak / 7);
+  if (earned > given) {
+    const newShields = earned - given;
+    localStorage.setItem('upphatt_shields_given_' + currentChildKey, earned);
+    setShields(getShields() + newShields);
+    return newShields;
+  }
+  return 0;
+}
+
+// ── Streakur með skjaldakerfi ──
+function getStreakWithShields(sessions) {
+  if (!sessions.length) return 0;
+  const shields = getShields();
+  let streak = 0;
+  let shieldsUsed = 0;
+  const d = new Date();
+
+  for (let i = 0; i < 180; i++) {
+    const k = makeDateKey(d);
+    const hasSession = sessions.some(s => s.date === k && (s.seconds || 0) >= 60);
+    if (hasSession) {
+      streak++; d.setDate(d.getDate() - 1);
+    } else if (i === 0) {
+      d.setDate(d.getDate() - 1); // í dag — ekki ennþá lesið
+    } else if (shieldsUsed < shields) {
+      shieldsUsed++; streak++; d.setDate(d.getDate() - 1);
+    } else {
+      break;
+    }
+  }
+  return streak;
+}
+
+// ── Hlaða barnaötu og uppfæra UI ──
+function loadChildSessions() {
+
+  const q = query(
+    collection(db, 'sessions'),
+    where('familyId', '==', currentFamilyId),
+    where('childKey', '==', currentChildKey)
+  );
+
+  onSnapshot(q, snap => {
+
+    const sessions = snap.docs.map(d => ({ ...d.data() }))
+      .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+
+    const total  = sessions.length;
+    const streak = getStreakWithShields(sessions);
+    const shields = getShields();
+
+    // Vikudottar
+    renderWeekDots(sessions, 'child-week-dots');
+
+    // Streak pill
+    if (streak > 0) {
+      document.getElementById('child-streak').style.display = 'inline-flex';
+      document.getElementById('streak-num').textContent = streak;
+    } else {
+      document.getElementById('child-streak').style.display = 'none';
+    }
+
+    // Skjaldapillur
+    if (shields > 0) {
+      document.getElementById('child-shields').style.display = 'inline-flex';
+      document.getElementById('shields-num').textContent = shields;
+    } else {
+      document.getElementById('child-shields').style.display = 'none';
+    }
+
+    // Athuga hvort skjöldur sé unninn
+    const newShields = checkAndGrantShield(streak);
+    if (newShields > 0) {
+      setTimeout(() => playSound('streak'), 300);
+    }
+
+    // Streak í hættu?
+    const today     = makeDateKey(new Date());
+    const yesterday = makeDateKey(new Date(Date.now() - 86400000));
+    const readToday = sessions.some(s => s.date === today && (s.seconds || 0) >= 60);
+    const readYesterday = sessions.some(s => s.date === yesterday && (s.seconds || 0) >= 60);
+    const warningEl = document.getElementById('shield-warning');
+    const warningText = document.getElementById('shield-warning-text');
+
+    if (!readToday && readYesterday && streak > 1) {
+      warningEl.style.display = '';
+      if (shields > 0) {
+        warningText.textContent = `Þú átt ${shields} frídaga — ef þú gleymir er skjöldurinn notaður sjálfkrafa.`;
+      } else {
+        warningText.textContent = `Les í dag til að halda ${streak} daga röðinni!`;
+      }
+    } else {
+      warningEl.style.display = 'none';
+    }
+
+    // Síðustu lotur
+    if (sessions.length) {
+      document.getElementById('child-sessions-wrap').style.display = '';
+      document.getElementById('child-sessions-list').innerHTML =
+        sessions.slice(0, 5).map(s => `
+          <div class="session">
+            <div class="session-title">${s.title || 'Lestur'}${s.pagesRead ? ` · ${s.pagesRead} bls.` : ''}</div>
+            <div class="session-meta">${formatLabel(s.createdAt) || s.date || ''} · ${fmtTime(s.seconds || 0)}</div>
+          </div>`).join('');
+    }
+
+  }, e => console.error('Child listener villa:', e));
+}
+
+// ── Start reading ──
+window.startReading = function(){
+  pendingSession={ title:document.getElementById('read-title').value.trim()||'Lestur', pageStart:parseInt(document.getElementById('page-start').value,10)||null };
+  elapsedSecs=0; readingStartMs=Date.now();
+  audioChunks={start:[],mid:[],end:[]};
+  snippetTimers.forEach(t=>clearTimeout(t)); snippetTimers=[];
+
+  document.getElementById('setup-card').style.display='none';
+  document.getElementById('reading-card').style.display='';
+  document.getElementById('finish-card').style.display='none';
+  const disp=document.getElementById('timer-display');
+  disp.textContent=timerMode==='down'?'15:00':'0:00';
+  disp.className='timer-big running';
+  document.getElementById('timer-status').textContent=timerMode==='down'?'Les upphátt — tíminn líður niður…':'Les upphátt…';
+  document.getElementById('audio-status').textContent='';
+
+  if(timerInterval) clearInterval(timerInterval);
+  timerInterval=setInterval(()=>{
+    elapsedSecs=Math.floor((Date.now()-readingStartMs)/1000);
+    const display=timerMode==='down'?Math.max(0,TARGET-elapsedSecs):elapsedSecs;
+    disp.textContent=fmtTime(display);
+    if(elapsedSecs>=TARGET){ disp.className='timer-big done'; document.getElementById('timer-status').textContent='Markmið náð! 🎉'; }
+  },500);
+
+  startAudio();
+};
+
+async function startAudio(){
+  try {
+    audioStream=await navigator.mediaDevices.getUserMedia({audio:true});
+    // 4 handahófskenndar mínútur — 15 sek hvert sýni (~300KB hver)
+    const minutes = [1, 5, 9, 13].map(m => m*60*1000);
+    minutes.forEach((ms, i) => {
+      const t = setTimeout(()=>recordSnippet('s'+i, 15000), ms);
+      snippetTimers.push(t);
+    });
+    document.getElementById('audio-status').textContent='🎤 Hljóðsýni á mín. 1, 5, 9 og 13';
+  } catch(e){
+    document.getElementById('audio-status').textContent='🔇 Hljóðupptaka ekki í boði';
+  }
+}
+
+function getSupportedMimeType(){
+  const types = ['audio/mp4','audio/aac','audio/webm;codecs=opus','audio/webm','audio/ogg'];
+  for(const t of types){
+    if(MediaRecorder.isTypeSupported(t)) return t;
+  }
+  return '';
+}
+
+function recordSnippet(label,duration){
+  if(!audioStream) return;
+  const chunks=[];
+  const mimeType = getSupportedMimeType();
+  let rec;
+  try { rec = mimeType ? new MediaRecorder(audioStream,{mimeType}) : new MediaRecorder(audioStream); }
+  catch(e){ try{ rec=new MediaRecorder(audioStream); }catch(e2){ return; } }
+  rec.ondataavailable=e=>{if(e.data.size>0)chunks.push(e.data);};
+  rec.onstop=()=>{ audioChunks[label]=chunks; audioChunks[label+'_mime']=rec.mimeType||mimeType||'audio/webm'; };
+  rec.start();
+  setTimeout(()=>{try{rec.stop();}catch(e){}},duration);
+}
+
+function stopAudio(){
+  snippetTimers.forEach(t=>clearTimeout(t)); snippetTimers=[];
+  if(audioStream){audioStream.getTracks().forEach(t=>t.stop());audioStream=null;}
+}
+
+// ── Stop reading ──
+window.stopReading = function(){
+  if(!readingStartMs) return;
+  clearInterval(timerInterval); timerInterval=null;
+  elapsedSecs=Math.floor((Date.now()-readingStartMs)/1000);
+  stopAudio();
+  if(elapsedSecs<60){
+    if(confirm('Þú lasir í minna en 1 mínútu — lota verður ekki vistuð. Hætta við?')){
+      cancelReading(); return;
+    }
+  }
+  document.getElementById('reading-card').style.display='none';
+  document.getElementById('finish-card').style.display='';
+  const mins=Math.floor(elapsedSecs/60);
+  document.getElementById('finish-emoji').textContent  = mins>=15?'🏆':mins>=5?'⭐':'👍';
+  document.getElementById('finish-title').textContent  = mins>=15?'Frábær lestur!':mins>=5?'Vel gert!':'Byrjunin er góð!';
+  document.getElementById('finish-sub').textContent    = `${fmtTime(elapsedSecs)} lesið — skráðu blaðsíðuna til að rekja framfarir`;
+
+  // Hljóð eftir gæðum
+  setTimeout(() => playSound(mins >= 15 ? 'streak' : 'done'), 400);
+  document.getElementById('page-end').oninput=function(){
+    const start=parseInt(document.getElementById('page-start').value,10);
+    const end=parseInt(this.value,10);
+    const pd=document.getElementById('pages-display');
+    if(start&&end&&end>start) pd.textContent=`📖 ${end-start} blaðsíður lesnar!`;
+    else pd.textContent='';
+  };
+};
+
+window.cancelReading = function(){
+  clearInterval(timerInterval); timerInterval=null;
+  stopAudio(); readingStartMs=null; elapsedSecs=0; pendingSession=null;
+  document.getElementById('reading-card').style.display='none';
+  document.getElementById('finish-card').style.display='none';
+  document.getElementById('setup-card').style.display='';
+  document.getElementById('timer-display').textContent=timerMode==='down'?'15:00':'0:00';
+  document.getElementById('timer-display').className='timer-big';
+};
+
+// ── Save session ──
+async function doSaveSession(pageEnd){
+  const err=document.getElementById('save-error');
+  err.textContent='Vistar...';
+  try {
+    const now=new Date();
+    let audioPath=null;
+    const allChunks=[...( audioChunks.s0||[]),...(audioChunks.s1||[]),...(audioChunks.s2||[]),...(audioChunks.s3||[])];
+    if(allChunks.length>0){
+      try {
+        const mimeType = audioChunks['s0_mime']||audioChunks['s1_mime']||audioChunks['s2_mime']||audioChunks['s3_mime']||'audio/webm';
+        const ext = mimeType.includes('mp4') ? 'mp4' : mimeType.includes('ogg') ? 'ogg' : 'webm';
+        const blob=new Blob(allChunks,{type:mimeType});
+        const path=`recordings/${currentFamilyId}/${currentChildKey}/${now.getTime()}.${ext}`;
+        await uploadBytes(ref(storage,path),blob,{contentType:mimeType});
+        audioPath=path;
+        err.textContent='🎤 Hljóð vistað!';
+      } catch(e){ console.error('Storage villa:',e); }
+    }
+    await addDoc(collection(db,'sessions'),{
+      familyId:currentFamilyId, childKey:currentChildKey, childName:currentChildName,
+      title:pendingSession?.title||'Lestur',
+      pageStart:pendingSession?.pageStart||null, pageEnd:pageEnd||null,
+      pagesRead:(pendingSession?.pageStart&&pageEnd)?pageEnd-pendingSession.pageStart:null,
+      seconds:elapsedSecs, timerMode,
+      hasAudio:!!audioPath, audioPath,
+      timestamp:Date.now(), date:makeDateKey(now), createdAt:serverTimestamp()
+    });
+
+    // Milestone — notum fjölda úr family cache
+    const myCount = (familySessions||[]).filter(s=>s.childKey===currentChildKey).length + 1;
+    checkMilestone(myCount);
+
+    finishReset();
+  } catch(e){
+    err.textContent='Ekki tókst að vista: '+e.message;
+    console.error(e);
+  }
+}
+
+window.saveSession=function(){
+  const pageEnd=parseInt(document.getElementById('page-end').value,10)||null;
+  doSaveSession(pageEnd);
+};
+window.skipSave=function(){ doSaveSession(null); };
+
+function finishReset(){
+  pendingSession=null; readingStartMs=null;
+  ['finish-card'].forEach(id=>document.getElementById(id).style.display='none');
+  document.getElementById('setup-card').style.display='';
+  document.getElementById('read-title').value='';
+  document.getElementById('page-start').value='';
+  document.getElementById('page-end').value='';
+  document.getElementById('pages-display').textContent='';
+  document.getElementById('save-error').textContent='';
+  document.getElementById('timer-display').textContent=timerMode==='down'?'15:00':'0:00';
+  document.getElementById('timer-display').className='timer-big';
+}
+
+// ── Parent login ──
+window.firebaseLogin = async function(){
+  const email=document.getElementById('login-email').value.trim();
+  const pw=document.getElementById('login-pw').value;
+  const err=document.getElementById('login-error');
+  err.textContent='';
+  try {
+    document.getElementById('login-email').disabled=true;
+    document.getElementById('login-pw').disabled=true;
+    await signInWithEmailAndPassword(auth,email,pw);
+  } catch(e){
+    err.textContent='Innskráning mistókst — athugaðu netfang og lykilorð.';
+    document.getElementById('login-email').disabled=false;
+    document.getElementById('login-pw').disabled=false;
+  }
+};
+
+// ── Auth state ──
+onAuthStateChanged(auth, async (user)=>{
+  if(user){
+    try {
+      const snap=await getDoc(doc(db,'users',user.uid));
+      const profile=snap.exists()?snap.data():null;
+      currentRole=     'parent';
+      currentFamilyId= profile?.familyId||user.uid;
+      currentParentName = (profile?.name || 'Foreldri').split(' ')[0];
+      window._parentChildren = profile?.children || []; // geyma börn
+      window._expandedChildren = {}; // rekja hverjir eru opnir
+      document.getElementById('parent-pill').textContent  = currentParentName;
+      document.getElementById('parent-hero').textContent  = `Góðan dag, ${currentParentName}`;
+      if(profile?.children){
+        document.getElementById('codes-list').innerHTML =
+          profile.children.map(c=>`
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.15)">
+              <div style="font-size:13px;font-weight:800;color:white">👦 ${c.name}</div>
+              <div style="font-family:Georgia,serif;font-size:20px;font-weight:700;color:rgba(255,255,255,0.9);letter-spacing:3px">${c.code||''}</div>
+            </div>`).join('') +
+          (profile.familyCode ? `
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;margin-top:2px">
+              <div style="font-size:12px;font-weight:800;color:rgba(255,255,255,0.7)">👨‍👩‍👦 Fjölskyldukóði</div>
+              <div style="font-family:Georgia,serif;font-size:15px;font-weight:700;color:rgba(255,255,255,0.85);letter-spacing:2px">${profile.familyCode}</div>
+            </div>` : '');
+      }
+      startFamilyListener();
+      goTo('screen-parent-home');
+      // Init nýja dashboard UI
+      if (window.initParentDashboard) window.initParentDashboard(profile);
+    } catch(e){ console.error('Auth villa:',e); }
+    return;
+  }
+  if(familyUnsub){familyUnsub();familyUnsub=null;}
+  familySessions=[];
+  const saved=localStorage.getItem('upphatt_child');
+  if(saved){
+    try {
+      const data=JSON.parse(saved);
+      currentRole=     'child';
+      currentFamilyId= data.familyId;
+      currentChildKey= data.childKey;
+      currentChildName=data.childName;
+      setupChildHome();
+      goTo('screen-child-home');
+      return;
+    } catch(e){localStorage.removeItem('upphatt_child');}
+  }
+  goTo('screen-login');
+});
+
+// ── Family listener ──
+function startFamilyListener(){
+  if(familyUnsub) familyUnsub();
+  const q=query(collection(db,'sessions'),where('familyId','==',currentFamilyId));
+  familyUnsub=onSnapshot(q, snap=>{
+    familySessions=snap.docs.map(d=>({_docId:d.id,...d.data()}))
+      .sort((a,b)=>(b.timestamp||0)-(a.timestamp||0));
+    renderParentHome();
+  }, e=>console.error('Family listener villa:',e));
+}
+
+// ── Parent home ──
+// ── Parent home ──
+function renderParentHome() {
+
+  const root  = document.getElementById('parent-content');
+  const today = makeDateKey(new Date());
+  const mon   = getMonday();
+
+  // Flokka lotur eftir barni
+  const groups = {};
+  familySessions.forEach(s => {
+    if (!groups[s.childKey]) groups[s.childKey] = [];
+    groups[s.childKey].push(s);
+  });
+
+  // Sameina börn úr profile og sessions — sýna öll börn
+  const profileChildren = window._parentChildren || [];
+  const allKeys = [...new Set([
+    ...profileChildren.map(c => c.key),
+    ...Object.keys(groups)
+  ])];
+
+  if (!allKeys.length) {
+    root.innerHTML = `
+      <div style="background:#fff;border-radius:18px;padding:32px 20px;text-align:center;box-shadow:var(--card-shadow)">
+        <div style="font-size:40px;margin-bottom:12px">📖</div>
+        <div style="font-size:15px;font-weight:700;color:var(--deep)">Engar lotur enn</div>
+        <div style="font-size:13px;color:var(--mist);margin-top:6px">Þegar barn klárar lestur birtist hún hér strax</div>
+      </div>`;
+    return;
+  }
+
+  const DAYS = ['Mán','Þri','Mið','Fim','Fös','Lau','Sun'];
+
+  const childCards = allKeys.map(key => {
+
+    const list      = groups[key] || [];
+    const profChild = profileChildren.find(c => c.key === key);
+    const childName = list[0]?.childName || profChild?.name || key;
+    const readToday = list.some(s => s.date === today && (s.seconds||0) >= 60);
+    const streak    = getStreak(list);
+    const isExpanded = !!(window._expandedChildren && window._expandedChildren[key]);
+
+    // Vikudagar með mínútur og play merki
+    const weekDays = DAYS.map((lbl, i) => {
+      const d = new Date(mon); d.setDate(mon.getDate() + i);
+      const k = makeDateKey(d);
+      const daySessions = list.filter(s => s.date === k && (s.seconds||0) >= 60);
+      const mins = daySessions.reduce((a,s) => a + Math.floor((s.seconds||0)/60), 0);
+      const hasAudio = daySessions.some(s => s.hasAudio && s.audioPath);
+      const audioPath = daySessions.find(s => s.hasAudio && s.audioPath)?.audioPath;
+      const docId = (daySessions.find(s => s._docId)?._docId || k+key).replace(/[^a-z0-9]/gi,'');
+      const isToday = k === today;
+      const bg  = mins >= 15 ? '#4CAF7D' : mins > 0 ? '#b8e0c8' : '#f0f4f9';
+      const col = mins >= 15 ? '#fff' : mins > 0 ? '#2e7a4f' : '#aab7c4';
+      const border = isToday ? '2px solid var(--ocean)' : '2px solid transparent';
+      return `
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px">
+          <div style="font-size:8px;font-weight:800;color:var(--mist);text-transform:uppercase">${lbl}</div>
+          <div style="width:100%;aspect-ratio:1;border-radius:8px;background:${bg};border:${border};
+            display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;
+            cursor:${hasAudio?'pointer':'default'};position:relative"
+            ${hasAudio ? `onclick="playDayAudio('${audioPath}','adiv-${docId}')"` : ''}>
+            <div style="font-size:8px;font-weight:800;color:${col}">${mins>0?mins+'m':'—'}</div>
+            ${hasAudio ? '<div style="font-size:8px;color:'+col+'">▶</div>' : ''}
+          </div>
+          <div id="adiv-${docId}" style="display:none;position:absolute;z-index:10;width:280px;left:0;top:50px;background:#fff;border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,0.15);padding:8px"></div>
+        </div>`;
+    }).join('');
+
+    // Síðustu lotur þegar opið
+    const sessionList = isExpanded ? list.slice(0, 8).map(s => `
+      <div style="padding:8px 0;border-bottom:1px solid #f7fafc;display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
+        <div style="flex:1;min-width:0">
+          <div style="font-size:12px;font-weight:700;color:var(--deep)">${s.title||'Lestur'}${s.pagesRead?' · '+s.pagesRead+' bls.':''}</div>
+          <div style="font-size:10px;color:var(--mist);margin-top:1px">${formatLabel(s.createdAt)||s.date||''}</div>
+          ${s.hasAudio && s.audioPath ? `
+            <button onclick="playAudio('${s.audioPath}','adiv2-${s._docId}')"
+              style="margin-top:4px;background:#f0f9f4;border:1px solid #4CAF7D;border-radius:50px;padding:3px 10px;font-size:10px;font-weight:800;color:#1a7a3f;cursor:pointer">
+              ▶ Hlusta
+            </button>
+            <div id="adiv2-${s._docId}"></div>` : ''}
+        </div>
+        <div style="font-size:13px;font-weight:800;color:var(--ocean);flex-shrink:0">${fmtTime(s.seconds||0)}</div>
+      </div>`).join('') : '';
+
+    return `
+      <div style="background:#fff;border-radius:18px;margin-bottom:14px;box-shadow:var(--card-shadow);overflow:hidden">
+        <div style="padding:14px 16px;display:flex;align-items:center;justify-content:space-between">
+          <div style="font-size:16px;font-weight:800;color:var(--deep)">${childName}</div>
+          <div style="display:flex;align-items:center;gap:6px">
+            ${streak > 1 ? `<div style="background:#fff8e6;border:1.5px solid var(--sun);border-radius:50px;padding:3px 9px;font-size:11px;font-weight:800;color:#b07d00">🔥${streak}</div>` : ''}
+            <div style="padding:4px 12px;border-radius:50px;font-size:11px;font-weight:800;
+              background:${readToday?'#e6f9ef':'#fff0f0'};
+              color:${readToday?'#1a7a3f':'#c0392b'};
+              border:1.5px solid ${readToday?'#4CAF7D':'#FF6B6B'}">
+              ${readToday ? '✓ Las í dag' : '◯ Á eftir'}
+            </div>
+          </div>
+        </div>
+        <div style="padding:0 12px 14px;display:flex;gap:4px;position:relative">
+          ${weekDays}
+        </div>
+        <div style="border-top:1px solid #f0f4f9">
+          <button onclick="toggleExpand('${key}')"
+            style="width:100%;background:none;border:none;padding:10px;font-size:11px;font-weight:800;color:var(--ocean);cursor:pointer">
+            ${isExpanded ? '▲ Minna' : '▼ Meira — síðustu lotur'}
+          </button>
+        </div>
+        ${isExpanded ? `<div style="padding:0 16px 12px;border-top:1px solid #f0f4f9">${sessionList||'<div style="font-size:12px;color:var(--mist);text-align:center;padding:12px">Engar lotur enn</div>'}</div>` : ''}
+      </div>`;
+
+  }).join('');
+
+  root.innerHTML = childCards + renderMonthChart(familySessions);
+}
+
+// ── Toggle expand ──
+window.toggleExpand = function(key) {
+  if (!window._expandedChildren) window._expandedChildren = {};
+  window._expandedChildren[key] = !window._expandedChildren[key];
+  renderParentHome();
+};
+
+// ── Play audio á vikudagsskjá ──
+window.playDayAudio = async function(path, containerId) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  if (el.style.display !== 'none') { el.style.display = 'none'; return; }
+  el.style.display = '';
+  el.innerHTML = '⏳';
+  try {
+    const url = await getDownloadURL(ref(storage, path));
+    const resp = await fetch(url);
+    const blob = await resp.blob();
+    const ext  = path.split('.').pop().toLowerCase();
+    const mime = ext==='mp4' ? 'audio/mp4' : 'audio/webm';
+    const burl = URL.createObjectURL(new Blob([blob], {type:mime}));
+    el.innerHTML = `<audio controls preload="auto" src="${burl}" style="width:100%"></audio>`;
+  } catch(e) { el.innerHTML = '❌'; el.style.display='none'; }
+};
+
+// ── Mánuðabar chart ──
+function renderMonthChart(sessions) {
+  const now = new Date();
+  const months = [];
+  for (let i = 5; i >= 0; i--) {
+    const d     = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const label = d.toLocaleString('is-IS', { month: 'short' });
+    const mins  = sessions.filter(s => {
+      const sd = new Date(s.date);
+      return sd.getFullYear()===d.getFullYear() && sd.getMonth()===d.getMonth() && (s.seconds||0)>=60;
+    }).reduce((a,s) => a + Math.floor((s.seconds||0)/60), 0);
+    months.push({ label, mins });
+  }
+  const maxMins = Math.max(...months.map(m => m.mins), 1);
+  const bars = months.map(m => {
+    const pct = Math.round((m.mins / maxMins) * 100);
+    return `
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
+        <div style="font-size:9px;font-weight:700;color:var(--mist)">${m.mins>0?m.mins+'m':''}</div>
+        <div style="width:100%;background:#f0f4f9;border-radius:6px;height:60px;display:flex;align-items:flex-end;overflow:hidden">
+          <div style="width:100%;background:var(--ocean);border-radius:6px;height:${pct}%;min-height:${m.mins>0?'4px':'0'}"></div>
+        </div>
+        <div style="font-size:9px;font-weight:800;color:var(--mist);text-transform:capitalize">${m.label}</div>
+      </div>`;
+  }).join('');
+  return `
+    <div style="background:#fff;border-radius:18px;padding:16px;box-shadow:var(--card-shadow);margin-top:4px">
+      <div style="font-size:11px;font-weight:800;color:var(--mist);text-transform:uppercase;letter-spacing:.5px;margin-bottom:14px">📊 Iðkun eftir mánuðum</div>
+      <div style="display:flex;gap:6px;align-items:flex-end">${bars}</div>
+    </div>`;
+}
+
+
+// ── Kóðar toggle ──
+window.toggleCodes = function() {
+  const panel = document.getElementById('codes-panel');
+  const btn   = document.getElementById('codes-toggle-btn');
+  const open  = panel.style.display === 'none';
+  panel.style.display = open ? '' : 'none';
+  btn.textContent     = open ? '✕ Loka' : '🔑 Kóðar';
+};
+
+// ── Audio player ──
+window.playAudio = async function(path, containerId) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+
+  // Ef spilari er þegar opinn — loka honum
+  if (el.querySelector('audio')) {
+    el.innerHTML = '';
+    return;
+  }
+
+  el.innerHTML = '<div style="font-size:11px;color:var(--mist);font-weight:700;padding:6px 0">⏳ Hleður hljóð...</div>';
+
+  try {
+    const audioRef = ref(storage, path);
+    const url      = await getDownloadURL(audioRef);
+    const response = await fetch(url);
+    if (!response.ok) throw new Error('Fetch mistókst: ' + response.status);
+    const blob     = await response.blob();
+
+    const ext      = path.split('.').pop().toLowerCase();
+    const mimeType = ext === 'mp4' ? 'audio/mp4' : ext === 'ogg' ? 'audio/ogg' : 'audio/webm';
+    const blobUrl  = URL.createObjectURL(new Blob([blob], { type: mimeType }));
+
+    el.innerHTML = `
+      <audio controls preload="auto" src="${blobUrl}"
+        style="width:100%;margin-top:8px;border-radius:8px"
+        onended="URL.revokeObjectURL('${blobUrl}')">
+      </audio>`;
+
+  } catch(e) {
+    el.innerHTML = `<div style="font-size:11px;color:var(--coral);font-weight:700;padding:6px 0">Ekki tókst að hlaða hljóði</div>`;
+    console.error('playAudio villa:', e);
+  }
+};
+
+// ── Logout ──
+window.logout = async function(){
+  if(currentRole==='child'){
+    if(confirm('Skrá þig út? Þú þarft kóðann aftur til að skrá þig inn.')){
+      localStorage.removeItem('upphatt_child');
+      currentRole=null;currentFamilyId=null;currentChildKey=null;currentChildName=null;
+      cancelReading();
+      goTo('screen-login');
+    }
+    return;
+  }
+  if(familyUnsub){familyUnsub();familyUnsub=null;}
+  await signOut(auth);
+};
+
+// ══════════════════════════════════════════════
+// PARENT DASHBOARD UI
+// ══════════════════════════════════════════════
+
+let _phSelectedKey = null; // valið barn eða 'all'
+
+// ── Kallað þegar foreldri skráir sig inn ──
+window.initParentDashboard = function(profile) {
+  // Netfang í topbar
+  const emailEl = document.getElementById('ph-user-email');
+  if (emailEl) emailEl.textContent = profile?.email || '';
+
+  // Fjölskyldukóði
+  const fcEl = document.getElementById('ph-family-code');
+  if (fcEl) fcEl.textContent = profile?.familyCode || '—';
+
+  // Þema úr localStorage
+  initParentTheme();
+
+  // Velja fyrsta barn sjálfkrafa
+  const children = window._parentChildren || [];
+  _phSelectedKey = children.length > 0 ? children[0].key : 'all';
+
+  renderDashboard();
+};
+
+// ── Aðal render fall — kallað þegar sessions uppfærast ──
+window.renderDashboard = function() {
+  renderChildCards();
+  renderWeekGrid();
+  updateStats();
+  renderCalendar();
+  renderRecordings();
+};
+
+// ── Barn kort ──
+function renderChildCards() {
+  const row = document.getElementById('ph-children-row');
+  if (!row) return;
+
+  const children = window._parentChildren || [];
+  const sessions = familySessions || [];
+
+  if (!children.length) {
+    row.innerHTML = '<div class="ph-no-children">Engin börn skráð enn</div>';
+    return;
+  }
+
+  row.innerHTML = children.map(c => {
+    const count    = sessions.filter(s => s.childKey === c.key).length;
+    const isSelected = c.key === _phSelectedKey;
+    const today    = makeDateKey(new Date());
+    const readToday = sessions.some(s => s.childKey === c.key && s.date === today && (s.seconds||0) >= 60);
+    return `
+      <div class="ph-child-card ${isSelected ? 'ph-child-selected' : ''}"
+           onclick="selectChild('${c.key}')">
+        <div class="ph-child-avatar ${isSelected ? 'ph-child-avatar-active' : ''}">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <div class="ph-child-name">${c.name}</div>
+        <div class="ph-child-code">${c.code || ''}</div>
+        <div class="ph-child-sessions">${count} lotur</div>
+        ${readToday ? '<div class="ph-child-today">✓ Las í dag</div>' : ''}
+      </div>`;
+  }).join('');
+}
+
+// ── Velja barn ──
+window.selectChild = function(key) {
+  _phSelectedKey = key;
+  renderChildCards();
+  renderWeekGrid();
+  updateStats();
+  renderCalendar();
+  renderRecordings();
+};
+
+// ── 7 daga grid ──
+function renderWeekGrid() {
+  const grid = document.getElementById('ph-week-grid');
+  if (!grid) return;
+
+  const sessions = familySessions || [];
+  const days = ['M','Þ','M','F','F','L','S'];
+  const today = new Date();
+  today.setHours(12,0,0,0);
+
+  const cells = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(today.getDate() - i);
+    const key = makeDateKey(d);
+    const isToday = i === 0;
+
+    const daySessions = sessions.filter(s => {
+      const matchDay = s.date === key;
+      const matchChild = !_phSelectedKey || _phSelectedKey === 'all'
+        ? true
+        : s.childKey === _phSelectedKey;
+      return matchDay && matchChild && (s.seconds||0) >= 60;
+    });
+
+    const mins = daySessions.reduce((a,s) => a + Math.floor((s.seconds||0)/60), 0);
+    const dotClass = mins === 0 ? 'ph-wdot-empty'
+                   : mins < 15 ? 'ph-wdot-low'
+                   : mins < 30 ? 'ph-wdot-mid'
+                   : 'ph-wdot-full';
+
+    cells.push(`
+      <div class="ph-wday-cell">
+        <div class="ph-wday-lbl ${isToday ? 'ph-wday-today' : ''}">${days[6-i]}</div>
+        <div class="ph-wdot ${dotClass} ${isToday ? 'ph-wdot-today' : ''}" title="${mins > 0 ? mins + ' mín' : 'Ekki lesið'}"></div>
+      </div>`);
+  }
+  grid.innerHTML = cells.join('');
+}
+
+// ── Stats ──
+function updateStats() {
+  const sessions = familySessions || [];
+  const filtered = !_phSelectedKey || _phSelectedKey === 'all'
+    ? sessions
+    : sessions.filter(s => s.childKey === _phSelectedKey);
+
+  const mins     = Math.round(filtered.reduce((a,s) => a + (s.seconds||0), 0) / 60);
+  const count    = filtered.length;
+  const clips    = filtered.filter(s => s.hasAudio).length;
+
+  const mEl = document.getElementById('ph-stat-mins');
+  const sEl = document.getElementById('ph-stat-sessions');
+  const cEl = document.getElementById('ph-stat-clips');
+  if (mEl) mEl.textContent = mins;
+  if (sEl) sEl.textContent = count;
+  if (cEl) cEl.textContent = clips;
+}
+
+// ── Activity Calendar (7 vikur × 7 dagar) ──
+function renderCalendar() {
+  const daysRow  = document.getElementById('ph-calendar-days');
+  const grid     = document.getElementById('ph-calendar-grid');
+  const emptyEl  = document.getElementById('ph-calendar-empty');
+  if (!grid) return;
+
+  const sessions = familySessions || [];
+  const filtered = !_phSelectedKey || _phSelectedKey === 'all'
+    ? sessions
+    : sessions.filter(s => s.childKey === _phSelectedKey);
+
+  const WEEKS = 7;
+  const today = new Date();
+  today.setHours(12,0,0,0);
+
+  // Dagstafir — sýna einu sinni
+  if (daysRow) {
+    daysRow.innerHTML = ['M','Þ','M','F','F','L','S']
+      .map(d => `<div class="ph-cal-day-lbl">${d}</div>`).join('');
+  }
+
+  let hasAny = false;
+  const rows = [];
+
+  for (let w = WEEKS - 1; w >= 0; w--) {
+    const cells = [];
+    for (let d = 6; d >= 0; d--) {
+      const date = new Date(today);
+      date.setDate(today.getDate() - (w * 7 + d));
+      const key = makeDateKey(date);
+      const isToday = (w === 0 && d === 0);
+
+      const daySessions = filtered.filter(s => s.date === key && (s.seconds||0) >= 60);
+      const mins = daySessions.reduce((a,s) => a + Math.floor((s.seconds||0)/60), 0);
+      if (mins > 0) hasAny = true;
+
+      const dotClass = mins === 0 ? 'ph-cal-dot-empty'
+                     : mins < 15  ? 'ph-cal-dot-low'
+                     : mins < 30  ? 'ph-cal-dot-mid'
+                     : 'ph-cal-dot-full';
+
+      cells.push(`<div class="ph-cal-dot ${dotClass} ${isToday ? 'ph-cal-dot-today' : ''}" title="${key}: ${mins > 0 ? mins + ' mín' : 'Ekki lesið'}"></div>`);
+    }
+    rows.push(`<div class="ph-cal-row">${cells.join('')}</div>`);
+  }
+
+  grid.innerHTML = rows.join('');
+  if (emptyEl) emptyEl.style.display = hasAny ? 'none' : '';
+}
+
+// ── Recordings — accordion ──
+function renderRecordings() {
+  const list = document.getElementById('ph-recordings-list');
+  const sub  = document.getElementById('ph-rec-subtitle');
+  if (!list) return;
+
+  const sessions = familySessions || [];
+  const filtered = (!_phSelectedKey || _phSelectedKey === 'all'
+    ? sessions
+    : sessions.filter(s => s.childKey === _phSelectedKey)
+  ).filter(s => s.hasAudio);
+
+  if (sub) {
+    const childName = _phSelectedKey && _phSelectedKey !== 'all'
+      ? (window._parentChildren || []).find(c => c.key === _phSelectedKey)?.name || ''
+      : '';
+    sub.textContent = childName
+      ? `15 sek klippingar úr lotum ${childName}`
+      : '15 sek klippingar úr hverri lotu';
+  }
+
+  if (!filtered.length) {
+    list.innerHTML = '<div class="ph-rec-empty">Engar upptökur enn. Klippingar birtast hér eftir lestrarlotur!</div>';
+    return;
+  }
+
+  const clipDefs = [
+    { key: 'audioPath_min1',  label: 'Mín. 1' },
+    { key: 'audioPath_min5',  label: 'Mín. 5' },
+    { key: 'audioPath_min9',  label: 'Mín. 9' },
+    { key: 'audioPath_min13', label: 'Mín. 13' }
+  ];
+
+  list.innerHTML = filtered.slice(0, 20).map((s, idx) => {
+    const d = s.date || '';
+    const mins = Math.floor((s.seconds||0) / 60);
+    const label = `${d} · ${mins} mín`;
+
+    const clips = clipDefs.map(({key: pathKey, label: clipLabel}, i) => {
+      const path = s[pathKey] || (i === 0 ? s.audioPath : null);
+      const btnId    = `ph-clipbtn-${s._docId}-${i}`;
+      const playerId = `ph-clipplay-${s._docId}-${i}`;
+      if (!path) return `
+        <div class="ph-clip-item">
+          <button class="ph-clip-btn ph-clip-disabled" disabled>${clipLabel}</button>
+        </div>`;
+      return `
+        <div class="ph-clip-item">
+          <button id="${btnId}" class="ph-clip-btn"
+            onclick="phPlayClip('${path}','${playerId}','${btnId}','${currentFamilyId}','${s.childKey}','${s._docId}')">
+            ▶ ${clipLabel}
+          </button>
+          <div id="${playerId}" class="ph-clip-player"></div>
+        </div>`;
+    }).join('');
+
+    return `
+      <div class="ph-rec-item" id="ph-rec-${idx}">
+        <button class="ph-rec-header" onclick="toggleRec(${idx})">
+          <div class="ph-rec-label">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
+            ${label}
+          </div>
+          <span class="ph-rec-chevron" id="ph-chev-${idx}">›</span>
+        </button>
+        <div class="ph-rec-clips" id="ph-clips-${idx}" style="display:none">
+          ${clips}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// ── Accordion toggle ──
+window.toggleRec = function(idx) {
+  const clips = document.getElementById('ph-clips-' + idx);
+  const chev  = document.getElementById('ph-chev-' + idx);
+  if (!clips) return;
+  const isOpen = clips.style.display !== 'none';
+  clips.style.display = isOpen ? 'none' : 'grid';
+  if (chev) chev.style.transform = isOpen ? '' : 'rotate(90deg)';
+};
+
+// ── Play clip — wraps window.playClip, keeps star animation ──
+window.phPlayClip = async function(path, playerId, btnId, familyId, childKey, docId) {
+  const playerEl = document.getElementById(playerId);
+  const btnEl    = document.getElementById(btnId);
+  if (!playerEl) return;
+
+  // Toggle off
+  if (playerEl.style.display !== 'none' && playerEl.innerHTML !== '') {
+    playerEl.style.display = 'none';
+    playerEl.innerHTML = '';
+    if (btnEl) btnEl.classList.remove('ph-clip-playing');
+    return;
+  }
+
+  if (btnEl) btnEl.classList.add('ph-clip-playing');
+  playerEl.style.display = '';
+  playerEl.innerHTML = '<div class="ph-clip-loading">⏳ Hleður...</div>';
+
+  try {
+    const url     = await getDownloadURL(ref(storage, path));
+    const resp    = await fetch(url);
+    if (!resp.ok) throw new Error('fetch mistókst');
+    const blob    = await resp.blob();
+    const ext     = path.split('.').pop().toLowerCase();
+    const mime    = ext === 'mp4' ? 'audio/mp4' : ext === 'ogg' ? 'audio/ogg' : 'audio/webm';
+    const blobUrl = URL.createObjectURL(new Blob([blob], { type: mime }));
+
+    playerEl.innerHTML = `<audio controls preload="auto" src="${blobUrl}"
+      style="width:100%;margin-top:6px;border-radius:8px"
+      onended="URL.revokeObjectURL('${blobUrl}')"></audio>`;
+
+    const audio = playerEl.querySelector('audio');
+    if (audio) {
+      // ── STAR ANIMATION TRIGGER ──
+      audio.addEventListener('play', () => {
+        writeListenEventPH(familyId, childKey, playerEl, docId);
+      });
+      audio.play().catch(() => {});
+    }
+    // Senda einu sinni við opnun — sama hegðun og áður
+    writeListenEventPH(familyId, childKey, playerEl, docId);
+    if (btnEl) btnEl.classList.remove('ph-clip-playing');
+  } catch(e) {
+    playerEl.innerHTML = '<div class="ph-clip-error">❌ Ekki tókst að hlaða</div>';
+    if (btnEl) btnEl.classList.remove('ph-clip-playing');
+  }
+};
+
+// ── writeListenEvent fyrir nýja dashboard ──
+const _phListenCooldown = {};
+async function writeListenEventPH(familyId, childKey, playerEl, sessionDocId) {
+  if (!familyId || !childKey) return;
+  const now = Date.now();
+  const k   = familyId + '_' + childKey;
+  if (_phListenCooldown[k] && now - _phListenCooldown[k] < 5000) return;
+
+  const listenerName = currentParentName || 'Foreldri';
+  let wroteAny = false;
+
+  try {
+    await setDoc(doc(db, 'listens', k), {
+      listenerName, familyId, childKey, timestamp: now
+    });
+    wroteAny = true;
+  } catch(e) { console.error('Listen write 1 villa:', e); }
+
+  try {
+    await addDoc(collection(db, 'listenEvents'), {
+      familyId, childKey, listenerName, timestamp: now, createdAt: serverTimestamp()
+    });
+    wroteAny = true;
+  } catch(e) { console.error('Listen write 2 villa:', e); }
+
+  if (sessionDocId) {
+    try {
+      await setDoc(doc(db, 'sessions', sessionDocId), {
+        lastListenedAt: now, lastListenerName: listenerName
+      }, { merge: true });
+      wroteAny = true;
+    } catch(e) { console.error('Listen write 3 villa:', e); }
+  }
+
+  if (wroteAny) {
+    _phListenCooldown[k] = now;
+    // Sýna status í player
+    let statusEl = playerEl.querySelector('.ph-listen-status');
+    if (!statusEl) {
+      statusEl = document.createElement('div');
+      statusEl.className = 'ph-listen-status';
+      playerEl.appendChild(statusEl);
+    }
+    statusEl.textContent = '✓ Hlustunarskilaboð sent';
+  }
+}
+
+// ── Tab skipti ──
+window.switchTab = function(tab) {
+  ['activity','recordings'].forEach(t => {
+    const btn  = document.getElementById('ph-tab-' + t);
+    const cont = document.getElementById('ph-content-' + t);
+    if (btn)  btn.classList.toggle('ph-tab-active', t === tab);
+    if (cont) cont.style.display = t === tab ? '' : 'none';
+  });
+};
+
+// ── Day/Night toggle ──
+function initParentTheme() {
+  const saved = localStorage.getItem('upphatt_parent_theme') || 'dark';
+  const el = document.getElementById('screen-parent-home');
+  const btn = document.getElementById('ph-theme-btn');
+  if (saved === 'light') {
+    if (el) el.classList.add('ph-light');
+    if (btn) btn.textContent = '🌙';
+  } else {
+    if (btn) btn.textContent = '☀️';
+  }
+}
+
+window.toggleParentTheme = function() {
+  const el  = document.getElementById('screen-parent-home');
+  const btn = document.getElementById('ph-theme-btn');
+  if (!el) return;
+  const isLight = el.classList.toggle('ph-light');
+  localStorage.setItem('upphatt_parent_theme', isLight ? 'light' : 'dark');
+  if (btn) btn.textContent = isLight ? '🌙' : '☀️';
+  // ALDREI kallar á renderDashboard() — audio óhreyfð
+};
+
+// ── Add child placeholder ──
+window.openAddChildPopup = function() {
+  alert('Bæta við barni — kemur bráðum!');
+};
+
+// ── Hook into auth — kalla á initParentDashboard eftir login ──
+// Við hookum í renderParentHome sem er kallað eftir onSnapshot
+const _origRenderParentHome = window.renderParentHome;
+window.renderParentHome = function() {
+  if (_origRenderParentHome) _origRenderParentHome();
+  renderDashboard();
+};
+</script>
+</body>
+</html>
