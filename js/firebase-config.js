@@ -7,6 +7,7 @@ import { getStorage }    from 'https://www.gstatic.com/firebasejs/12.11.0/fireba
 // Re-export every SDK function the app uses (change version in ONE place)
 export {
   signInWithEmailAndPassword, createUserWithEmailAndPassword,
+  sendEmailVerification, sendPasswordResetEmail,
   onAuthStateChanged, signOut
 } from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js';
 
