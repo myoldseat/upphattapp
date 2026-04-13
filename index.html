@@ -7,13 +7,104 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Upphátt">
-<meta name="theme-color" content="#07101e">
 <title>Upphátt</title>
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-<!-- CHILD LOGIN -->
+<!-- LOGIN -->
+<div id="screen-login" class="screen">
+  <div class="scroll-body" style="display:flex;align-items:center;justify-content:center;min-height:100vh;">
+    <div style="width:100%;max-width:420px">
+      <div class="hero landing" style="margin-bottom:20px;">
+        <div class="hero-label">Velkomin/n</div>
+        <h1 style="font-size:38px; margin:0 0 10px; line-height:1.05;">Lestrarapp fyrir börn og unglinga</h1>
+        <p id="app-subtitle" style="font-size:15px; margin:0; opacity:.9;">Íslenskt lestrarforrit</p>
+      </div>
+      <div class="age-switch">
+        <button class="age-btn active" id="age-kids-btn" onclick="setAgeMode('kids')">Börn</button>
+        <button class="age-btn" id="age-teens-btn" onclick="setAgeMode('teens')">Unglingar</button>
+      </div>
+      <div class="grid2" style="margin-top:16px;">
+        <button class="choice blue" onclick="goTo('screen-parent-login')">
+          <span class="big" id="choice-icon-parent">👩</span><span class="title">Ég er foreldri</span><div class="sub">Netfang + lykilorð</div>
+        </button>
+        <button class="choice green" onclick="goTo('screen-child-login')">
+          <span class="big" id="choice-icon-child">👦</span><span class="title">Ég er barn</span><div class="sub">Kóði frá foreldri</div>
+        </button>
+      </div>
+      <div class="grid2 feature-grid" style="margin-top:16px;">
+        <div class="card feature-card">
+          <div class="feature-title">Fjölskyldu-öruggt</div>
+          <p>Börn skrá sig inn með stuttum kóða sem foreldri býr til.</p>
+        </div>
+        <div class="card feature-card">
+          <div class="feature-title">Sjálfstætt lestrarflow</div>
+          <p>Tímateljari og upptalning gera lesturinn skemmtilegan og skýrann.</p>
+        </div>
+      </div>
+      <div class="card" style="margin-top:14px;text-align:center;background:#eef5ff;color:var(--deep);">
+        <div style="font-weight:800;margin-bottom:6px;">Einn rammi, tveir stílar</div>
+        <div>Veldu Börn eða Unglingar og prófaðu þemað sem passar ykkur.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PARENT LOGIN -->
+<div id="screen-parent-login" class="screen">
+  <div class="topbar">
+    <button class="back-btn" onclick="goTo('screen-child-login')">← Til baka</button>
+    <div class="logo"><div class="logo-icon">U</div> Upphátt</div>
+    <div></div>
+  </div>
+  <div class="scroll-body">
+    <div class="hero purple">
+      <div class="hero-label">Foreldri</div>
+      <h1>Velkomin/n</h1>
+      <p>Skráðu þig inn og fylgstu með í rauntíma.</p>
+    </div>
+    <div class="card">
+      <div class="form-group"><label>Netfang</label><input id="login-email" type="email" autocomplete="email" placeholder="þu@dæmi.is"></div>
+      <div class="form-group"><label>Lykilorð</label><input id="login-pw" type="password" autocomplete="current-password" placeholder="••••••••"></div>
+      <div id="login-error" class="notice" style="color:var(--coral);margin-bottom:10px"></div>
+      <button class="btn btn-primary" onclick="firebaseLogin()">🔑 Skrá inn</button>
+      <button class="btn btn-ghost" onclick="goTo('screen-parent-signup')" style="margin-top:10px;font-size:14px">✨ Stofna nýjan aðgang</button>
+    </div>
+  </div>
+</div>
+
+<!-- PARENT SIGNUP -->
+<div id="screen-parent-signup" class="screen">
+  <div class="topbar">
+    <button class="back-btn" onclick="goTo('screen-parent-login')">← Til baka</button>
+    <div class="logo"><div class="logo-icon">U</div> Upphátt</div>
+    <div></div>
+  </div>
+  <div class="scroll-body">
+    <div class="hero purple" style="background:linear-gradient(135deg,var(--purple),var(--ocean))">
+      <div class="hero-label">Nýr aðgangur</div>
+      <h1>Stofna fjölskyldu</h1>
+      <p>Skráðu þig inn og bættu við börnum til að byrja.</p>
+    </div>
+    <div class="card">
+      <div class="form-group"><label>Fullt nafn</label><input id="reg-name" type="text" placeholder="Nafn Nafnsson"></div>
+      <div class="form-group"><label>Netfang</label><input id="reg-email" type="email" placeholder="netfang@netfang.is"></div>
+      <div class="form-group"><label>Lykilorð</label><input id="reg-pw" type="password" placeholder="Minnst 6 stafir"></div>
+      <div style="margin:20px 0 10px;border-top:1px solid #eee;padding-top:15px;">
+        <label style="font-size:11px;font-weight:800;color:var(--mist);text-transform:uppercase">Börn</label>
+      </div>
+      <div id="signup-children-list">
+        <div class="form-group"><input class="child-name-input" type="text" placeholder="Nafn barns"></div>
+      </div>
+      <button class="btn btn-ghost" style="font-size:13px;padding:10px;margin-bottom:15px" onclick="addChildInput()">+ Bæta við öðru barni</button>
+      <div id="reg-error" class="notice" style="color:var(--coral);margin-bottom:10px"></div>
+      <button class="btn btn-primary" onclick="firebaseSignup()">🚀 Stofna aðgang</button>
+    </div>
+  </div>
+</div>
+
+<!-- CHILD LOGIN (landing) -->
 <div id="screen-child-login" class="screen active">
   <div class="cl-wrap">
     <div class="cl-brand"><span>Upp</span>Hátt</div>
@@ -38,7 +129,95 @@
   </div>
 </div>
 
-<!-- PARENT HOME — nýr dashboard -->
+<!-- CHILD HOME -->
+<div id="screen-child-home" class="screen">
+  <div class="topbar">
+    <button class="back-btn" onclick="logout()">← Út</button>
+    <div class="logo"><div class="logo-icon">U</div> Upphátt</div>
+    <div class="pill" id="child-name-pill">Barn</div>
+  </div>
+  <div class="scroll-body">
+    <div class="hero green" id="child-hero-card">
+      <div class="hero-label">Hæ!</div>
+      <h1 id="child-hero">Ertu tilbúinn að lesa? 🌟</h1>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+        <div id="child-streak" style="display:none;background:rgba(255,184,48,0.25);border:1.5px solid rgba(255,184,48,0.6);border-radius:50px;padding:5px 14px;font-size:13px;font-weight:800;color:#fff">
+          🔥 <span id="streak-num">0</span> daga röð
+        </div>
+        <div id="child-shields" style="display:none;background:rgba(255,255,255,0.2);border-radius:50px;padding:5px 14px;font-size:13px;font-weight:800;color:#fff">
+          🛡️ <span id="shields-num">0</span> frídagar
+        </div>
+      </div>
+    </div>
+
+    <div id="shield-warning" style="display:none;background:#fff3cd;border-radius:14px;padding:14px;margin-bottom:12px;border-left:4px solid var(--sun)">
+      <div style="font-size:13px;font-weight:800;color:#856404">⚠️ Streak í hættu!</div>
+      <div style="font-size:12px;color:#856404;margin-top:3px" id="shield-warning-text">Les í dag til að halda röðinni.</div>
+    </div>
+
+    <div class="card" id="child-week-card">
+      <div style="font-size:11px;font-weight:800;color:var(--mist);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Þessi vika — markmið: 15 mín/dag</div>
+      <div class="week-dots" id="child-week-dots"></div>
+    </div>
+
+    <div id="milestone-card" style="display:none;background:linear-gradient(135deg,var(--sun),#e8900a);border-radius:18px;padding:18px;margin-bottom:12px;text-align:center;color:var(--deep)">
+      <div style="font-size:36px;margin-bottom:6px" id="milestone-icon">🌱</div>
+      <div style="font-family:Georgia,serif;font-size:18px;font-weight:700" id="milestone-title">Verðlaun!</div>
+      <div style="font-size:13px;margin-top:4px;font-weight:600;opacity:.8" id="milestone-text"></div>
+    </div>
+
+    <div class="card" id="setup-card">
+      <div style="font-size:13px;font-weight:800;color:var(--deep);margin-bottom:12px">Setja upp lestrarlotur</div>
+      <div class="form-group">
+        <label>Heiti bókar (valfrjálst)</label>
+        <input id="read-title" type="text" placeholder="t.d. Harry Potter">
+      </div>
+      <div class="form-group">
+        <label>Byrjunarblaðsíða (valfrjálst)</label>
+        <input id="page-start" type="number" min="1" placeholder="t.d. 42" inputmode="numeric">
+      </div>
+      <div style="font-size:11px;font-weight:800;color:var(--deep);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Tímamælir</div>
+      <div class="mode-picker">
+        <button class="mode-btn active" id="mode-down" onclick="setMode('down')">⏳ Niðurtalning<br><span style="font-size:10px;font-weight:600;opacity:.7">15:00 → 0:00</span></button>
+        <button class="mode-btn" id="mode-up" onclick="setMode('up')">⏱ Upptalning<br><span style="font-size:10px;font-weight:600;opacity:.7">0:00 → 15:00+</span></button>
+      </div>
+      <button class="btn btn-primary" onclick="startReading()">🎤 Byrja að lesa</button>
+    </div>
+
+    <div class="card" id="reading-card" style="display:none">
+      <div class="timer-wrap">
+        <div class="timer-big" id="timer-display">15:00</div>
+        <div class="timer-sub"><span class="rec-dot"></span><span id="timer-status">Les upphátt…</span></div>
+      </div>
+      <div style="font-size:11px;color:var(--mist);font-weight:700;text-align:center;margin-bottom:16px" id="audio-status"></div>
+      <button class="btn btn-success" onclick="stopReading()">⏹ Klára lestrarlotur</button>
+      <button class="btn btn-ghost" onclick="cancelReading()" style="margin-top:10px">Hætta við</button>
+    </div>
+
+    <div class="card" id="finish-card" style="display:none">
+      <div style="text-align:center;margin-bottom:16px">
+        <div style="font-size:48px" id="finish-emoji">🎉</div>
+        <div style="font-family:Georgia,serif;font-size:22px;font-weight:700;color:var(--deep)" id="finish-title">Frábær lestur!</div>
+        <div style="font-size:13px;color:var(--mist);margin-top:4px" id="finish-sub"></div>
+      </div>
+      <div class="form-group">
+        <label>Hvaða blaðsíðu ertu kominn á? (valfrjálst)</label>
+        <input id="page-end" type="number" min="1" placeholder="t.d. 58" inputmode="numeric">
+      </div>
+      <div id="pages-display" style="text-align:center;font-size:13px;color:var(--moss);font-weight:800;margin-bottom:12px;min-height:20px"></div>
+      <div id="save-error" class="notice" style="color:var(--coral);margin-bottom:8px"></div>
+      <button class="btn btn-primary" onclick="saveSession()">✅ Vista og klára</button>
+      <button class="btn btn-ghost" onclick="skipSave()" style="margin-top:10px">Sleppa blaðsíðutali</button>
+    </div>
+
+    <div id="child-sessions-wrap" style="display:none">
+      <div style="font-size:11px;font-weight:800;color:var(--mist);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Síðustu lotur</div>
+      <div class="card" id="child-sessions-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- PARENT HOME -->
 <div id="screen-parent-home" class="screen ph-screen">
 
   <!-- Hidden legacy IDs — auth.js skrifar í þá -->
@@ -245,6 +424,7 @@
     </div>
   </div>
 </div>
+
 
 <script type="module" src="js/app.js"></script>
 </body>
