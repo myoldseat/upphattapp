@@ -7,6 +7,8 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Upphátt">
+<link rel="icon" type="image/svg+xml" href="/icon-teal.svg">
+<link rel="apple-touch-icon" href="/icon-teal.svg">
 <meta name="theme-color" content="#07101e">
 <title>Upphátt</title>
 <link rel="stylesheet" href="styles.css">
@@ -56,7 +58,7 @@
 <div id="screen-parent-login" class="screen">
   <div class="topbar">
     <button class="back-btn" onclick="goTo('screen-child-login')">← Til baka</button>
-    <div class="logo"><div class="logo-icon">U</div> Upphátt</div>
+    <div class="logo"><img src="/logo-light.svg" alt="Upphátt" style="height:26px;width:auto;display:block;"></div>
     <div></div>
   </div>
   <div class="scroll-body">
@@ -79,7 +81,7 @@
 <div id="screen-parent-signup" class="screen">
   <div class="topbar">
     <button class="back-btn" onclick="goTo('screen-parent-login')">← Til baka</button>
-    <div class="logo"><div class="logo-icon">U</div> Upphátt</div>
+    <div class="logo"><img src="/logo-light.svg" alt="Upphátt" style="height:26px;width:auto;display:block;"></div>
     <div></div>
   </div>
   <div class="scroll-body">
@@ -134,7 +136,7 @@
 <div id="screen-child-home" class="screen">
   <div class="topbar">
     <button class="back-btn" onclick="logout()">← Út</button>
-    <div class="logo"><div class="logo-icon">U</div> Upphátt</div>
+    <div class="logo"><img src="/logo-light.svg" alt="Upphátt" style="height:26px;width:auto;display:block;"></div>
     <div class="pill" id="child-name-pill">Barn</div>
   </div>
   <div class="scroll-body">
@@ -226,8 +228,9 @@
   <!-- Topbar -->
   <div class="ph-topbar">
     <div class="ph-topbar-left">
-      <div class="ph-brand"><span class="ph-brand-upp">Upp</span><span class="ph-brand-hatt">Hátt</span></div>
-      <div class="ph-user-email" id="ph-user-email"></div>
+      <div class="ph-brand">
+        <img src="/logo-light.svg" alt="Upphátt" id="ph-topbar-logo" style="height:26px;width:auto;display:block;">
+      </div>
     </div>
     <div class="ph-topbar-right">
       <button class="ph-theme-btn" id="ph-theme-btn" onclick="toggleParentTheme()" aria-label="Skipta um þema">☀️</button>
@@ -420,5 +423,25 @@
 </div>
 
 <script type="module" src="js/app.js"></script>
+<script>
+(function() {
+  function updateLogo() {
+    var isDark = document.body.classList.contains('dark') || document.documentElement.classList.contains('dark-theme') || document.documentElement.getAttribute('data-theme') === 'dark';
+    var src = isDark ? '/logo-dark.svg' : '/logo-light.svg';
+    var el = document.getElementById('ph-topbar-logo');
+    if (el) el.src = src;
+  }
+  var _orig = window.toggleParentTheme;
+  window.toggleParentTheme = function() {
+    if (typeof _orig === 'function') _orig.apply(this, arguments);
+    setTimeout(updateLogo, 30);
+  };
+  document.addEventListener('DOMContentLoaded', function() {
+    updateLogo();
+    new MutationObserver(updateLogo).observe(document.documentElement, { attributes: true, attributeFilter: ['class', 'data-theme'] });
+    new MutationObserver(updateLogo).observe(document.body, { attributes: true, attributeFilter: ['class'] });
+  });
+})();
+</script>
 </body>
 </html>
