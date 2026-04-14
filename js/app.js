@@ -1,5 +1,4 @@
-// ─── Main entry point — imports all modules, wires window functions ───
-
+// ─── Main entry point ───
 import { goTo }  from './helpers.js';
 import { S }     from './state.js';
 
@@ -8,17 +7,19 @@ import {
   openParentLoginPopup, closeParentLoginPopup, parentLoginFromPopup,
   showForgotPassword, backToLogin, sendPasswordReset,
   openSignupPopup, closeSignupPopup, backToLoginFromSignup, firebaseSignupPopup,
-  toggleParentTheme, openAddChildPopup
+  toggleParentTheme, openAddChildPopup, closeAddChildPopup, submitAddChild,
+  famCodeLogin,
+  openSettingsPopup, closeSettingsPopup, confirmDeleteChild
 } from './auth.js';
 
 import { setMode, startReading, stopReading, cancelReading, saveSession, skipSave } from './child-view.js';
 
 import {
   toggleExpand, playClip, toggleCodes,
-  phPlayClip, switchTab, toggleRec, selectChild, renderDashboard
+  phPlayClip, switchTab, toggleRec, selectChild, renderDashboard,
+  switchHeatmap, switchHeatmapMonth
 } from './parent-view.js';
 
-// ── Wire all HTML onclick handlers ──
 window.goTo                  = goTo;
 window.firebaseLogin         = firebaseLogin;
 window.firebaseSignup        = firebaseSignup;
@@ -26,7 +27,6 @@ window.childLogin            = childLogin;
 window.addChildInput         = addChildInput;
 window.logout                = logout;
 
-// Login popup
 window.openParentLoginPopup  = openParentLoginPopup;
 window.closeParentLoginPopup = closeParentLoginPopup;
 window.parentLoginFromPopup  = parentLoginFromPopup;
@@ -34,27 +34,35 @@ window.showForgotPassword    = showForgotPassword;
 window.backToLogin           = backToLogin;
 window.sendPasswordReset     = sendPasswordReset;
 
-// Signup popup
 window.openSignupPopup       = openSignupPopup;
 window.closeSignupPopup      = closeSignupPopup;
 window.backToLoginFromSignup = backToLoginFromSignup;
 window.firebaseSignupPopup   = firebaseSignupPopup;
 
-// Parent dashboard
 window.toggleParentTheme     = toggleParentTheme;
 window.openAddChildPopup     = openAddChildPopup;
+window.closeAddChildPopup    = closeAddChildPopup;
+window.submitAddChild        = submitAddChild;
 window.selectChild           = selectChild;
 window.switchTab             = switchTab;
 window.toggleRec             = toggleRec;
 window.phPlayClip            = phPlayClip;
 window.renderDashboard       = renderDashboard;
+window.switchHeatmap         = switchHeatmap;
+window.switchHeatmapMonth    = switchHeatmapMonth;
 
-// Legacy
+// FAM code login
+window.famCodeLogin          = famCodeLogin;
+
+// Settings
+window.openSettingsPopup     = openSettingsPopup;
+window.closeSettingsPopup    = closeSettingsPopup;
+window.confirmDeleteChild    = confirmDeleteChild;
+
 window.toggleExpand          = toggleExpand;
 window.playClip              = playClip;
 window.toggleCodes           = toggleCodes;
 
-// Child reading
 window.setMode               = setMode;
 window.startReading          = startReading;
 window.stopReading           = stopReading;
@@ -62,33 +70,22 @@ window.cancelReading         = cancelReading;
 window.saveSession           = saveSession;
 window.skipSave              = skipSave;
 
-// Child login glow
 window.activateChildLoginInputGlow = function() {
   const wrap = document.querySelector('.cl-wrap');
   if (!wrap) return;
   wrap.classList.add('is-engaged');
 };
 
-// ── Age mode (kids/teens) ──
 function updateLandingMode(mode) {
-  const subtitle   = document.getElementById('app-subtitle');
-  const parentIcon = document.getElementById('choice-icon-parent');
-  const childIcon  = document.getElementById('choice-icon-child');
-  const kidsBtn    = document.getElementById('age-kids-btn');
-  const teensBtn   = document.getElementById('age-teens-btn');
+  const kidsBtn  = document.getElementById('age-kids-btn');
+  const teensBtn = document.getElementById('age-teens-btn');
   if (!kidsBtn || !teensBtn) return;
   if (mode === 'teens') {
     document.body.classList.add('theme-teens');
-    if (subtitle)    subtitle.textContent    = 'Lestrarútfærsla fyrir unglinga';
-    if (parentIcon)  parentIcon.textContent  = '💼';
-    if (childIcon)   childIcon.textContent   = '🎧';
     kidsBtn.classList.remove('active');
     teensBtn.classList.add('active');
   } else {
     document.body.classList.remove('theme-teens');
-    if (subtitle)    subtitle.textContent    = 'Íslenskt lestrarforrit';
-    if (parentIcon)  parentIcon.textContent  = '👩';
-    if (childIcon)   childIcon.textContent   = '👦';
     teensBtn.classList.remove('active');
     kidsBtn.classList.add('active');
   }
